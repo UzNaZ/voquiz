@@ -3,10 +3,11 @@ name = "voquiz"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "UzNaZ",email = "uzik.bs@gmail.com"}
+    {name = "UzNaZ",email = "uzik.bs@gmail.com"},
+    {name = "iamnovichek",email="rungotika@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi[all] (>=0.115.12,<0.116.0)",
     "sqlalchemy (>=2.0.41,<3.0.0)"
