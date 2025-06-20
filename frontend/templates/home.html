@@ -47,19 +47,19 @@
                 </div>
                 <br />
                 <div class="d-flex gap-4 align-items-center mt-5">
-                    <select name="langFrom" class="lang-select">
+                    <select name="langFrom" id="from" class="lang-select">
                         <option value="uk">Ukrainian</option>
                         <option value="en">English</option>
                     </select>
                     <span class="arrow text-white fs-4">→</span>
-                    <select name="langTo" class="lang-select">
+                    <select name="langTo" id="to" class="lang-select">
                         <option value="en">English</option>
                         <option value="uk">Ukrainian</option>
                     </select>
                 </div>
                 <br />
                 <div class="mt-5 pt-3">
-                    <button type="submit" class="btn-start">Start</button>
+                    <button type="submit" class="btn-start" id="start-btn">Start</button>
                 </div>
             </form>
         </div>
@@ -72,8 +72,9 @@
   ></script>
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const fromSel = document.querySelector('select[name="langFrom"]');
-    const toSel   = document.querySelector('select[name="langTo"]');
+    const currentLocation = window.location.href;
+    const fromSel = document.getElementById('from');
+    const toSel   = document.getElementById('to');
 
     function syncTo() {
       if (fromSel.value === toSel.value) {
@@ -89,6 +90,18 @@
     fromSel.addEventListener('change', syncTo);
     toSel.addEventListener('change', syncFrom);
     syncTo();
+
+    const form = document.querySelector('form');
+    const startButton = document.getElementById('start-btn');
+
+    startButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = currentLocation;
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+    });
   });
   </script>
 </body>
