@@ -1,18 +1,21 @@
-import fastapi
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from backend.src.api.endpoints import router as api_endpoint_router
 from backend.src.config import settings
 
 
-def initialize_backend_application() -> fastapi.FastAPI:
-    app = fastapi.FastAPI(**settings.set_backend_app_attributes)  # type: ignore
+def initialize_backend_application() -> FastAPI:
+    app = FastAPI()
     app.include_router(router=api_endpoint_router, prefix=settings.API_PREFIX)
 
     return app
 
 
-backend_app: fastapi.FastAPI = initialize_backend_application()
+backend_app: FastAPI = initialize_backend_application()
+backend_app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+backend_app.mount("/images", StaticFiles(directory="frontend/images"), name="images")
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:backend_app")
+    uvicorn.run(app="main:backend_app", reload=True)
