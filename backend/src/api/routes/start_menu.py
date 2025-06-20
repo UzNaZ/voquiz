@@ -6,4 +6,4 @@ templates = Jinja2Templates(directory="frontend/templates")
 
 @menu_router.get("/")
 async def start(request: Request):
-    return templates.TemplateResponse(request=request, name="home.html")
+    return templates.TemplateResponse(name="home.html", context={"request": request})
