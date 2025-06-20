@@ -1,8 +1,4 @@
-from pydantic import Field, computed_field
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import URL
-import pydantic_core
-
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     API_PREFIX: str = "/api"
