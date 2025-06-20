@@ -5,7 +5,7 @@ import pydantic_core
 
 
 class Settings(BaseSettings):
-    pass
+    API_PREFIX: str = "/api"
 
 
 settings = Settings()
