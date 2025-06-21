@@ -3,7 +3,6 @@ from re import sub
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase, declared_attr
 
-
 CONVENTION = {
     "ix": "%(table_name)s_%(column_0_N_name)s_idx",
     "uq": "%(table_name)s_%(column_0_N_name)s_key",
