@@ -1,11 +1,8 @@
-import asyncio
 import csv
 import re
 from io import StringIO
 
 import httpx
-from data_normalization import (check_for_multiple_uk_words,
-                                check_for_parenthesis)
 
 
 def get_spreadsheet_id(link: str):

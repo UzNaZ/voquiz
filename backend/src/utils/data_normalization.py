@@ -1,9 +1,9 @@
 import re
 
 
-async def check_for_multiple_uk_words(
+async def check_for_multiple_words(
     spreadsheet_data: list[tuple[str, str]], sep: str = ","
-) -> list[tuple[str, str | list]]:
+) -> list[tuple[str | list[str], str | list[str]]]:
     edited_data = list(spreadsheet_data)
     for i, (en_word, uk_word) in enumerate(edited_data):
         if sep in uk_word:
@@ -20,26 +20,24 @@ async def check_for_multiple_uk_words(
 
 async def check_for_parenthesis(
     spreadsheet_data: list[tuple[str, str]],
-) -> list[tuple[str | tuple, str | tuple]]:
+) -> list[tuple[str | tuple[str, ...], str | tuple[str, ...]]]:
     edited_data = list(spreadsheet_data)
     for i, (en_word, uk_word) in enumerate(edited_data):
         if "(" in en_word:
-            new_en_word = re.split(r"(\(.*?\))", en_word)
-            new_en_word = tuple(
-                part.strip("()").strip()
-                for i, part in enumerate(new_en_word)
-                if part.strip()
-            )
+            new_en_word = split_by_parentheses(en_word)
             edited_data[i] = (new_en_word, uk_word)
 
     for i, (en_word, uk_word) in enumerate(edited_data):
         if "(" in uk_word:
-            new_uk_word = re.split(r"(\(.*?\))", uk_word)
-            new_uk_word = tuple(
-                part.strip("()").strip()
-                for i, part in enumerate(new_uk_word)
-                if part.strip()
-            )
+            new_uk_word = split_by_parentheses(uk_word)
             edited_data[i] = (en_word, new_uk_word)
-            print(edited_data[i])
     return edited_data
+
+
+def split_by_parentheses(text: str) -> tuple[str, ...]:
+    parts = re.split(r"(\(.*?\))", text)
+    return tuple(
+        part.strip("()").strip()
+        for part in parts
+        if part.strip()
+    )
