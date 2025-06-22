@@ -1,8 +1,11 @@
+import asyncio
 import csv
 import re
 from io import StringIO
 
 import httpx
+from data_normalization import (check_for_multiple_uk_words,
+                                check_for_parenthesis)
 
 
 def get_spreadsheet_id(link: str):
@@ -28,12 +31,12 @@ async def get_sheet_data(link: str):
 
     f = StringIO(response.text)
     reader = csv.reader(f)
-    result = []
+    result = {}
 
     for row in reader:
-        result.append({row[1]: row[3]})
+        result[row[1]] = row[3]
 
-    return result
+    return list(result.items())
 
 
 async def get_sheet_data_by_name(link: str, sheet_name: str):
@@ -45,9 +48,9 @@ async def get_sheet_data_by_name(link: str, sheet_name: str):
 
     data = StringIO(response.text)
     reader = csv.reader(data)
-    result = []
+    result = {}
 
     for row in reader:
-        result.append({row[1]: row[3]})
+        result[row[1]] = row[3]
 
-    return result
+    return result.items()
