@@ -16,7 +16,9 @@ SpreadsheetRowWithParens = tuple[WordFieldWithParens, WordFieldWithParens]
 def check_for_multiple_words(
     spreadsheet_data: list[SpreadsheetRow], separator: str = ","
 ) -> list[SpreadsheetRowWithMultipleTranslations]:
-    spreadsheet_data = typing.cast(list[SpreadsheetRowWithMultipleTranslations], spreadsheet_data)
+    spreadsheet_data = typing.cast(
+        list[SpreadsheetRowWithMultipleTranslations], spreadsheet_data
+    )
     for i, (en_word, uk_word) in enumerate(spreadsheet_data):
         if separator in uk_word:
             uk_words = [word.strip() for word in uk_word.split(separator)]
@@ -48,8 +50,4 @@ def check_for_parentheses(
 
 def split_by_parentheses(text: str) -> WordTuple:
     parts = re.split(AllRegexes.WORD_IN_PARENTHESES, text)
-    return tuple(
-        part.strip("()").strip()
-        for part in parts
-        if part.strip()
-    )
+    return tuple(part.strip("()").strip() for part in parts if part.strip())

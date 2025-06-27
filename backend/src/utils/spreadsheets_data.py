@@ -4,7 +4,8 @@ from io import StringIO
 
 import httpx
 
-from backend.values import SpreadSheets, AllRegexes
+from backend.src.utils.serializers import check_for_parentheses, check_for_multiple_words
+from backend.values import AllRegexes, SpreadSheets
 
 
 def get_spreadsheet_id(link: str):
@@ -23,7 +24,9 @@ async def get_sheet_data(link: str):
     spreadsheet_id = get_spreadsheet_id(link)
     sheet_id = await get_sheet_id(link)
 
-    url = SpreadSheets.GET_BY_GID_URL.format(spreadsheet_id=spreadsheet_id, gid=sheet_id)
+    url = SpreadSheets.GET_BY_GID_URL.format(
+        spreadsheet_id=spreadsheet_id, gid=sheet_id
+    )
     async with httpx.AsyncClient() as client:
         response = await client.get(url, follow_redirects=True)
         response.raise_for_status()
@@ -40,7 +43,9 @@ async def get_sheet_data(link: str):
 
 async def get_sheet_data_by_name(link: str, sheet_name: str):
     spreadsheet_id = get_spreadsheet_id(link)
-    url = SpreadSheets.GET_BY_NAME_URL.format(spreadsheet_id=spreadsheet_id, sheet_name=sheet_name)
+    url = SpreadSheets.GET_BY_NAME_URL.format(
+        spreadsheet_id=spreadsheet_id, sheet_name=sheet_name
+    )
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         response.raise_for_status()
