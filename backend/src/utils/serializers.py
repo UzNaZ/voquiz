@@ -1,9 +1,21 @@
 import re
 
+from backend.values import AllRegexes
 
-async def check_for_multiple_words(
-    spreadsheet_data: list[tuple[str, str]], sep: str = ","
-) -> list[tuple[str | list[str], str | list[str]]]:
+WordList = list[str]
+WordTuple = tuple[str, ...]
+WordField = str | WordList
+WordFieldWithParens = str | WordTuple
+
+# Row types
+SpreadsheetRow = tuple[str, str]
+SpreadsheetRowWithMultipleTranslations = tuple[WordField, WordField]
+SpreadsheetRowWithParens = tuple[WordFieldWithParens, WordFieldWithParens]
+
+
+def check_for_multiple_words(
+    spreadsheet_data: list[SpreadsheetRow], sep: str = ","
+) -> list[SpreadsheetRowWithMultipleTranslations]:
     edited_data = list(spreadsheet_data)
     for i, (en_word, uk_word) in enumerate(edited_data):
         if sep in uk_word:
@@ -18,9 +30,9 @@ async def check_for_multiple_words(
     return edited_data
 
 
-async def check_for_parenthesis(
-    spreadsheet_data: list[tuple[str, str]],
-) -> list[tuple[str | tuple[str, ...], str | tuple[str, ...]]]:
+def check_for_parentheses(
+    spreadsheet_data: list[SpreadsheetRow],
+) -> list[SpreadsheetRowWithParens]:
     edited_data = list(spreadsheet_data)
     for i, (en_word, uk_word) in enumerate(edited_data):
         if "(" in en_word:
@@ -34,8 +46,8 @@ async def check_for_parenthesis(
     return edited_data
 
 
-def split_by_parentheses(text: str) -> tuple[str, ...]:
-    parts = re.split(r"(\(.*?\))", text)
+def split_by_parentheses(text: str) -> WordTuple:
+    parts = re.split(AllRegexes.WORD_IN_PARENTHESES, text)
     return tuple(
         part.strip("()").strip()
         for part in parts
