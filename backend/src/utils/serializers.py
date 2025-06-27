@@ -7,24 +7,23 @@ WordTuple = tuple[str, ...]
 WordField = str | WordList
 WordFieldWithParens = str | WordTuple
 
-# Row types
 SpreadsheetRow = tuple[str, str]
 SpreadsheetRowWithMultipleTranslations = tuple[WordField, WordField]
 SpreadsheetRowWithParens = tuple[WordFieldWithParens, WordFieldWithParens]
 
 
 def check_for_multiple_words(
-    spreadsheet_data: list[SpreadsheetRow], sep: str = ","
+    spreadsheet_data: list[SpreadsheetRow], separator: str = ","
 ) -> list[SpreadsheetRowWithMultipleTranslations]:
     edited_data = list(spreadsheet_data)
     for i, (en_word, uk_word) in enumerate(edited_data):
-        if sep in uk_word:
-            uk_words = [word.strip() for word in uk_word.split(sep)]
+        if separator in uk_word:
+            uk_words = [word.strip() for word in uk_word.split(separator)]
             edited_data[i] = (en_word, uk_words)
 
     for i, (en_word, uk_word) in enumerate(edited_data):
-        if sep in en_word:
-            en_words = [word.strip() for word in en_word.split(sep)]
+        if separator in en_word:
+            en_words = [word.strip() for word in en_word.split(separator)]
             edited_data[i] = (en_words, uk_word)
 
     return edited_data
