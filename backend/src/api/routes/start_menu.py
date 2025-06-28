@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 
 from backend.src.models.schemas.pydantic_schemas.quiz_data import QuizData
-
 
 menu_router = APIRouter()
 templates = Jinja2Templates(directory="frontend/templates")

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 
-from backend.src.utils.serializers import check_for_parentheses, check_for_multiple_words
+from backend.src.utils.serializers import (check_for_multiple_translations,
+                                           check_for_parentheses)
 from backend.src.utils.spreadsheets_data import get_sheet_data
 
 quiz_router = APIRouter()
@@ -21,4 +22,4 @@ async def get_question(index: int, request: Request):
     from_lang_to_lang = quiz_data["from_lang_to_lang"]
     spreadsheet_data = await get_sheet_data(url)
     serialized_data = check_for_parentheses(spreadsheet_data)
-    serialized_data = check_for_multiple_words(spreadsheet_data)
+    serialized_data = check_for_multiple_translations(spreadsheet_data)
