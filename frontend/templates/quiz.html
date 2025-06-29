@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VoQuiz</title>
-  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="icon" href="{{ url_for('images', path='/logo.png') }}" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -14,45 +14,67 @@
     integrity="sha384-…"
     crossorigin="anonymous"
   />
-  <link rel="stylesheet" href="quiz.css" />
+  <link rel="stylesheet" href="{{ url_for('static', path='quiz.css') }}" />
 </head>
 <body>
   <div class="parent">
     <div class="quiz-container d-flex flex-column align-items-center">
-      <h1 class="mb-5 logo-text">VoQuiz</h1>
-      
       <div class="flip-card">
         <div class="flip-card-inner">
           <div class="flip-card-front">
             <div class="card">
               <div class="card-body">
-                <div class="question-label text-muted">Question</div>
-                <p class="card-text question-text mb-4">Word to translate will appear here</p>
+                <p class="score"> {{amount_of_questions - question_number}}/{{ amount_of_questions }} </p>
+                <h1 class="logo-text mb-4">VoQuiz</h1>
+                <div class="question-label text-muted">Translate the word</div>
+                <p class="card-text question-text mb-4">{{ source_word }}</p>
                 <div class="input-wrapper">
                   <input type="text" class="answer-input" placeholder="answer">
                 </div>
-                <div class="text-muted small mt-5 pt-3">Click to see correct answer</div>
+                <div class="flip-instruction">Submit</div>
+                <a href="#" class="btn-next">Next</a>
               </div>
             </div>
           </div>
           <div class="flip-card-back">
             <div class="card">
               <div class="card-body">
+                <p class="score"> {{score}} </p>
+                <!-- Conditional icon display -->
+                <div id=correctness-sign>
+                  {% if is_correct %}
+                    <!-- Checkmark icon for correct answer -->
+                    <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="40" cy="40" r="38" fill="white"/>
+                      <circle cx="40" cy="40" r="34" fill="#03C988"/>
+                      <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                        <polyline points="25,40 35,50 55,30"/>
+                      </g>
+                    </svg>
+                  {% else %}
+                    <!-- X icon for incorrect answer -->
+                    <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="40" cy="40" r="38" fill="white"/>
+                      <circle cx="40" cy="40" r="34" fill="#D85D5D"/>
+                      <g stroke="white" stroke-width="5" stroke-linecap="round">
+                        <line x1="26" y1="26" x2="54" y2="54"/>
+                        <line x1="54" y1="26" x2="26" y2="54"/>
+                      </g>
+                    </svg>
+                  {% endif %}
+                </div>
+                <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Answer</div>
-                <p class="card-text question-text mb-4">This is the back of the card with the answer.</p>
-                <div class="text-muted small mt-3">Click to flip back</div>
+                <p class="card-text question-text mb-4">{{ translation }}</p>
+                <div class="flip-instruction">Flip back</div>
+                <a href="#" class="btn-next">Next</a>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <br />
-      <div class="mt-5">
-        <a href="#" class="btn-next">Next</a>
-      </div>
     </div>
   </div>
-
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-…"
@@ -62,18 +84,26 @@
     document.addEventListener('DOMContentLoaded', () => {
       const flipCard = document.querySelector('.flip-card');
       flipCard.addEventListener('click', (e) => {
-        // If the click is on the input or inside the input wrapper, don't flip the card
-        if (e.target.classList.contains('answer-input') || 
-            e.target.closest('.input-wrapper')) {
+        // If the click is on the input, button, or inside their wrappers, don't flip the card
+        if (e.target.classList.contains('answer-input') ||
+            e.target.closest('.input-wrapper') ||
+            e.target.classList.contains('btn-next')) {
           return;
         }
         flipCard.classList.toggle('flipped');
       });
-      
-      // Prevent click events on the input from bubbling up to the card
+
+      // Prevent click events on the input and button from bubbling up to the card
       const answerInput = document.querySelector('.answer-input');
       answerInput.addEventListener('click', (e) => {
         e.stopPropagation();
+      });
+
+      const nextButtons = document.querySelectorAll('.btn-next');
+      nextButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
       });
     });
   </script>
