@@ -70,5 +70,4 @@ async def submit_answer(request: Request, answer: QuizAnswer):
     request.session["current_index"] = index + 1
     return {
         "is_correct": is_correct,
-        "translations": translations if translations else "No answer available",
     }
