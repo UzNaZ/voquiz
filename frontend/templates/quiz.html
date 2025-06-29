@@ -64,8 +64,8 @@
                   {% endif %}
                 </div>
                 <h1 class="logo-text mb-4">VoQuiz</h1>
-                <div class="question-label text-muted">Answer</div>
-                <p class="card-text question-text mb-4">{{ translation }}</p>
+                <div class="question-label text-muted">Correct answer:</div>
+                <p class="card-text question-text mb-4">{{ ", ".join(translations) }}</p>
                 <div class="flip-instruction">Flip back</div>
                 <a href="#" class="btn-next">Next</a>
               </div>

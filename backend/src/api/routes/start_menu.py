@@ -16,4 +16,4 @@ async def start(request: Request):
 @menu_router.post("/")
 async def send_quiz_data(request: Request, quiz_data: QuizData):
     request.session["quiz_data"] = quiz_data.dict()
-    return RedirectResponse("/quiz/question/0", status_code=302)
+    return RedirectResponse("/quiz", status_code=302)

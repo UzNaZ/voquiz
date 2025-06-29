@@ -32,9 +32,8 @@ async def start_quiz(request: Request):
     request.session["shown_data"] = shown_data
     request.session["clean_data"] = clean_data
     request.session["quiz_keys"] = list(clean_data.keys())
-    request.session["current_index"] = 0
     request.session["amount_of_questions"] = len(clean_data)
-    return RedirectResponse(url="/quiz/question", status_code=302)
+    return RedirectResponse(url="/quiz/question/0", status_code=302)
 
 
 @quiz_router.get("/quiz/question/{index}")
@@ -56,7 +55,7 @@ async def get_question(index: int, request: Request):
         request=request,
         context={
             "source_word": current_key,
-            "translation": current_value,
+            "translations": current_value,
             "question_number": index + 1,
             "amount_of_questions": request.session.get("amount_of_questions"),
         },
@@ -64,22 +63,12 @@ async def get_question(index: int, request: Request):
 
 
 @quiz_router.post("/quiz/answer")
-async def submit_answer(request: Request, response: Response, answer: QuizAnswer):
-    request.session["is_correct"] = (
-        answer.answer in request.session.get("question_answers")[1]
-    )
+async def submit_answer(request: Request, answer: QuizAnswer):
+    translations = request.session.get("question_answers")[1]
+    is_correct = answer.answer in translations
     index = request.session.get("current_index", 0)
     request.session["current_index"] = index + 1
-    response.status_code = 204
-    return
-
-
-@quiz_router.get("/quiz/result")
-async def get_quiz_result(request: Request):
-    is_correct = request.session.get("is_correct", False)
-    correct_answers = request.session.get("question_answers", [[], []])[1]
-
     return {
         "is_correct": is_correct,
-        "correct_answer": correct_answers if correct_answers else "No answer available",
+        "translations": translations if translations else "No answer available",
     }
