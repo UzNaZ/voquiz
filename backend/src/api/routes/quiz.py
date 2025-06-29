@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -47,14 +47,14 @@ async def get_question(index: int, request: Request):
     if not shown_data or not quiz_keys or index + 1 >= len(quiz_keys):
         return templates.TemplateResponse(name="end.html", request=request)
 
-    current_key = quiz_keys[index]
+    current_key = tuple(quiz_keys[index])
     current_value = tuple(shown_data[current_key])
     request.session["question_answers"] = (current_key, current_value)
     return templates.TemplateResponse(
         name="quiz.html",
         request=request,
         context={
-            "source_word": current_key,
+            "source_words": current_key,
             "translations": current_value,
             "question_number": index + 1,
             "amount_of_questions": request.session.get("amount_of_questions"),

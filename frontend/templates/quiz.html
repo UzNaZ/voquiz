@@ -26,8 +26,8 @@
               <div class="card-body">
                 <p class="score"> {{amount_of_questions - question_number}}/{{ amount_of_questions }} </p>
                 <h1 class="logo-text mb-4">VoQuiz</h1>
-                <div class="question-label text-muted">Translate the word</div>
-                <p class="card-text question-text mb-4">{{ source_word }}</p>
+                <div class="question-label text-muted">Translate the word:</div>
+                <p class="card-text question-text mb-4">{{ ", ".join(source_words) }}</p>
                 <div class="input-wrapper">
                   <input type="text" class="answer-input" placeholder="answer">
                 </div>
