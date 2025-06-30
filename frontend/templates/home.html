@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VoQuiz</title>
-  <link rel="icon" href="{{ url_for('images', path='/logo.png') }}" type="image/png">
+  <link rel="icon" href="{{ url_for('images', path='logo.png') }}" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -14,13 +14,13 @@
     integrity="sha384-…"
     crossorigin="anonymous"
   />
-  <link rel="stylesheet" href="{{ url_for('static', path='home.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', path="home.css") }}" />
 </head>
 <body>
     <div class="parent">
         <div class="search-box d-flex flex-column align-items-center">
             <h1 class="mb-4 logo-text">VoQuiz</h1>
-            <form class="w-400 px-3" action="#" method="GET">
+            <form class="w-400 px-3" action="#" method="POST">
                 <input
                     type="search"
                     name="q"

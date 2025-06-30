@@ -6,14 +6,14 @@ from backend.src.models.schemas.pydantic_schemas.quiz_data import QuizAnswer
 from backend.src.utils.serializers import (check_for_multiple_translations,
                                            delete_explanations,
                                            delete_words_without_translation,
-                                           slice_dict)
+                                           slice_dict, check_for_multiple_source_words)
 from backend.src.utils.spreadsheets_data import get_sheet_data
 
 quiz_router = APIRouter()
 templates = Jinja2Templates(directory="frontend/templates")
 
 
-@quiz_router.post("/quiz")
+@quiz_router.get("/quiz")
 async def start_quiz(request: Request):
     quiz_data = request.session.get("quiz_data")
 
@@ -33,21 +33,22 @@ async def start_quiz(request: Request):
     request.session["clean_data"] = clean_data
     request.session["quiz_keys"] = list(clean_data.keys())
     request.session["amount_of_questions"] = len(clean_data)
-    return RedirectResponse(url="/quiz/question/0", status_code=302)
+    url = request.url_for("get_question", index=0)
+    return RedirectResponse(url, status_code=302)
 
 
 @quiz_router.get("/quiz/question/{index}")
 async def get_question(index: int, request: Request):
     shown_data = request.session.get("shown_data")
-    if not shown_data:
-        url = request.url_for("start")
-        return RedirectResponse(url, status_code=302)
+    # if not shown_data:
+    #     url = request.url_for("start")
+    #     return RedirectResponse(url, status_code=302)
 
     quiz_keys = request.session.get("quiz_keys")
-    if not shown_data or not quiz_keys or index + 1 >= len(quiz_keys):
+    if index + 1 > len(quiz_keys):
         return templates.TemplateResponse(name="end.html", request=request)
 
-    current_key = tuple(quiz_keys[index])
+    current_key = check_for_multiple_source_words(quiz_keys[index])
     current_value = tuple(shown_data[current_key])
     request.session["question_answers"] = (current_key, current_value)
     return templates.TemplateResponse(
