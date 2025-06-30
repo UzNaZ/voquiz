@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Request
+import random
+
+from fastapi import APIRouter, Request, Response, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -8,6 +10,7 @@ from backend.src.utils.serializers import (check_for_multiple_translations,
                                            delete_words_without_translation,
                                            slice_dict, check_for_multiple_source_words)
 from backend.src.utils.spreadsheets_data import get_sheet_data
+from backend.src.utils.validators import validate_quiz_answer
 
 quiz_router = APIRouter()
 templates = Jinja2Templates(directory="frontend/templates")
@@ -31,8 +34,11 @@ async def start_quiz(request: Request):
     clean_data = delete_explanations(serialized_data)
     request.session["shown_data"] = shown_data
     request.session["clean_data"] = clean_data
-    request.session["quiz_keys"] = list(clean_data.keys())
+    quiz_keys = list(clean_data.keys())
+    random.shuffle(quiz_keys)
+    request.session["quiz_keys"] = quiz_keys
     request.session["amount_of_questions"] = len(clean_data)
+    request.session["correct_answers"] = 0
     url = request.url_for("get_question", index=0)
     return RedirectResponse(url, status_code=302)
 
@@ -40,22 +46,22 @@ async def start_quiz(request: Request):
 @quiz_router.get("/quiz/question/{index}")
 async def get_question(index: int, request: Request):
     shown_data = request.session.get("shown_data")
-    # if not shown_data:
-    #     url = request.url_for("start")
-    #     return RedirectResponse(url, status_code=302)
-
+    if not shown_data:
+        url = request.url_for("start")
+        return RedirectResponse(url, status_code=302)
     quiz_keys = request.session.get("quiz_keys")
     if index + 1 > len(quiz_keys):
         return templates.TemplateResponse(name="end.html", request=request)
 
-    current_key = check_for_multiple_source_words(quiz_keys[index])
-    current_value = tuple(shown_data[current_key])
-    request.session["question_answers"] = (current_key, current_value)
+    current_key = quiz_keys[index]
+    current_value = shown_data[current_key]
+    current_source_word = check_for_multiple_source_words(current_key)
+    request.session["question_answers"] = (current_source_word, current_value)
     return templates.TemplateResponse(
         name="quiz.html",
         request=request,
         context={
-            "source_words": current_key,
+            "source_words": current_source_word,
             "translations": current_value,
             "question_number": index + 1,
             "amount_of_questions": request.session.get("amount_of_questions"),
@@ -64,11 +70,8 @@ async def get_question(index: int, request: Request):
 
 
 @quiz_router.post("/quiz/answer")
-async def submit_answer(request: Request, answer: QuizAnswer):
+async def submit_answer(request: Request, answer: QuizAnswer = Depends(validate_quiz_answer)):
     translations = request.session.get("question_answers")[1]
-    is_correct = answer.answer in translations
-    index = request.session.get("current_index", 0)
-    request.session["current_index"] = index + 1
-    return {
-        "is_correct": is_correct,
-    }
+    if answer.answer in translations:
+        request.session["correct_answers"] = request.session.get("correct_answers") + 1
+    return Response(status_code=204)

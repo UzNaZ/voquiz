@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VoQuiz</title>
-  <link rel="icon" href="{{ url_for('images', path='/logo.png') }}" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('images', path='logo.png') }}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
@@ -19,55 +19,86 @@
 <body>
   <div class="parent">
     <div class="quiz-container d-flex flex-column align-items-center">
-      <div class="flip-card">
+      <div class="flip-card" id="quiz-card">
         <div class="flip-card-inner">
+          <!-- Front side -->
           <div class="flip-card-front">
             <div class="card">
               <div class="card-body">
-                <p class="score"> {{amount_of_questions - question_number}}/{{ amount_of_questions }} </p>
+                <div class="score"> {{ question_number }}/{{ amount_of_questions }} </div>
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Translate the word:</div>
                 <p class="card-text question-text mb-4">{{ ", ".join(source_words) }}</p>
-                <div class="input-wrapper">
-                  <input type="text" class="answer-input" placeholder="answer">
-                </div>
-                <div class="flip-instruction">Submit</div>
-                <a href="#" class="btn-next">Next</a>
+
+                <form id="answer-form" name="answer" method="POST" action="/api/quiz/answer">
+                  <div class="input-wrapper mb-3">
+                    <input
+                      type="text"
+                      name="answer"
+                      id="answer-input"
+                      class="answer-input"
+                      placeholder="answer"
+                      required
+                      autocomplete="off"
+                    />
+                  </div>
+                  <button type="submit" class="flip-instruction">Submit</button>
+                </form>
+
+                <a
+                  href="/api/quiz/question/{{ question_number + 1 }}"
+                  class="btn-next"
+                  id="next-button"
+                  style="pointer-events: none; opacity: 0.6;"
+                >
+                  Next
+                </a>
               </div>
             </div>
           </div>
+
+          <!-- Back side -->
           <div class="flip-card-back">
             <div class="card">
               <div class="card-body">
-                <p class="score"> {{score}} </p>
-                <!-- Conditional icon display -->
-                <div id=correctness-sign>
-                  {% if is_correct %}
-                    <!-- Checkmark icon for correct answer -->
-                    <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="40" cy="40" r="38" fill="white"/>
-                      <circle cx="40" cy="40" r="34" fill="#03C988"/>
-                      <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-                        <polyline points="25,40 35,50 55,30"/>
-                      </g>
-                    </svg>
+                <div class="score"> {{ score }} </div>
+                <div id="correctness-sign" class="mb-3 text-center">
+                  {% if is_correct is not none %}
+                    {% if is_correct %}
+                      <!-- Checkmark icon for correct answer -->
+                      <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="40" cy="40" r="38" fill="white" />
+                        <circle cx="40" cy="40" r="34" fill="#03C988" />
+                        <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                          <polyline points="25,40 35,50 55,30" />
+                        </g>
+                      </svg>
+                    {% else %}
+                      <!-- X icon for incorrect answer -->
+                      <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="40" cy="40" r="38" fill="white" />
+                        <circle cx="40" cy="40" r="34" fill="#D85D5D" />
+                        <g stroke="white" stroke-width="5" stroke-linecap="round">
+                          <line x1="26" y1="26" x2="54" y2="54" />
+                          <line x1="54" y1="26" x2="26" y2="54" />
+                        </g>
+                      </svg>
+                    {% endif %}
                   {% else %}
-                    <!-- X icon for incorrect answer -->
-                    <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="40" cy="40" r="38" fill="white"/>
-                      <circle cx="40" cy="40" r="34" fill="#D85D5D"/>
-                      <g stroke="white" stroke-width="5" stroke-linecap="round">
-                        <line x1="26" y1="26" x2="54" y2="54"/>
-                        <line x1="54" y1="26" x2="26" y2="54"/>
-                      </g>
-                    </svg>
+                    <div id="result-icon"></div>
                   {% endif %}
                 </div>
+
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Correct answer:</div>
                 <p class="card-text question-text mb-4">{{ ", ".join(translations) }}</p>
-                <div class="flip-instruction">Flip back</div>
-                <a href="#" class="btn-next">Next</a>
+
+                <p id="filler"></p>
+
+                <div class="flip-instruction" id="flip-back">Flip back</div>
+                <a href="/api/quiz/question/{{ question_number }}" class="btn-next" id="next-button-back">
+                  Next
+                </a>
               </div>
             </div>
           </div>
@@ -75,6 +106,7 @@
       </div>
     </div>
   </div>
+
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-…"
@@ -82,28 +114,121 @@
   ></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const flipCard = document.querySelector('.flip-card');
+      const flipCard = document.getElementById('quiz-card');
+      const answerForm = document.getElementById('answer-form');
+      const answerInput = document.getElementById('answer-input');
+      const nextButton = document.getElementById('next-button');
+      const nextButtonBack = document.getElementById('next-button-back');
+      const flipBackBtn = document.getElementById('flip-back');
+      const resultIconContainer = document.getElementById('result-icon');
+
+      // Correct answers from backend (pass as JSON)
+      const correctAnswers = {{ translations|tojson | safe }};
+
+      // Initially disable Next buttons
+      nextButton.style.pointerEvents = 'none';
+      nextButton.style.opacity = '0.6';
+      nextButtonBack.style.pointerEvents = 'none';
+      nextButtonBack.style.opacity = '0.6';
+
+      // Prevent flip on input and buttons
       flipCard.addEventListener('click', (e) => {
-        // If the click is on the input, button, or inside their wrappers, don't flip the card
-        if (e.target.classList.contains('answer-input') ||
-            e.target.closest('.input-wrapper') ||
-            e.target.classList.contains('btn-next')) {
+        if (
+          e.target === answerInput ||
+          e.target.closest('.input-wrapper') ||
+          e.target === nextButton ||
+          e.target === nextButtonBack ||
+          e.target === flipBackBtn ||
+          e.target.type === 'submit'
+        ) {
           return;
         }
         flipCard.classList.toggle('flipped');
       });
 
-      // Prevent click events on the input and button from bubbling up to the card
-      const answerInput = document.querySelector('.answer-input');
+      // Prevent input click from flipping card
       answerInput.addEventListener('click', (e) => {
         e.stopPropagation();
       });
 
-      const nextButtons = document.querySelectorAll('.btn-next');
-      nextButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
+      // Prevent next buttons from flipping card
+      nextButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+      nextButtonBack.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      flipBackBtn.addEventListener('click', () => {
+        flipCard.classList.remove('flipped');
+      });
+
+      // Handle form submission for immediate feedback
+      answerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const userAnswer = answerInput.value.trim().toLowerCase();
+        const isCorrect = correctAnswers.some(
+          (ans) => ans.trim().toLowerCase() === userAnswer
+        );
+
+        // Show immediate feedback (flip card, show checkmark or cross)
+        flipCard.classList.add('flipped');
+
+        // Disable input and submit button while showing feedback
+        answerInput.disabled = true;
+        answerForm.querySelector('button[type="submit"]').disabled = true;
+
+        // Clear previous icon
+        if (resultIconContainer) resultIconContainer.innerHTML = '';
+
+        // Create icon SVG elements dynamically
+        if (resultIconContainer) {
+          if (isCorrect) {
+            resultIconContainer.innerHTML = `
+              <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" fill="white"/>
+                <circle cx="40" cy="40" r="34" fill="#03C988"/>
+                <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                  <polyline points="25,40 35,50 55,30"/>
+                </g>
+              </svg>
+            `;
+          } else {
+            resultIconContainer.innerHTML = `
+              <svg width="60" height="60" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" fill="white"/>
+                <circle cx="40" cy="40" r="34" fill="#D85D5D"/>
+                <g stroke="white" stroke-width="5" stroke-linecap="round">
+                  <line x1="26" y1="26" x2="54" y2="54"/>
+                  <line x1="54" y1="26" x2="26" y2="54"/>
+                </g>
+              </svg>
+            `;
+          }
+        }
+
+        // Enable Next buttons
+        nextButton.style.pointerEvents = 'auto';
+        nextButton.style.opacity = '1';
+        nextButtonBack.style.pointerEvents = 'auto';
+        nextButtonBack.style.opacity = '1';
+
+        // After 2 seconds, submit the form for server processing
+        setTimeout(() => {
+          answerForm.submit();
+        }, 2000);
+      });
+
+      // Adjust question text size dynamically
+      const questionTextEls = document.querySelectorAll('.question-text');
+      questionTextEls.forEach((el) => {
+        if (el.textContent.length > 20) {
+          el.classList.add('long-text');
+        }
+        if (el.textContent.length > 30) {
+          el.classList.add('very-long-text');
+        }
       });
     });
   </script>

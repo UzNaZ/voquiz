@@ -23,10 +23,9 @@ def check_for_multiple_translations(
                 word.strip() for word in translated_word.split(separator)
             )
         else:
-            translated_words = translated_word
+            translated_words = (translated_word,) if isinstance(translated_word, str) else translated_word
 
         result[source_word] = translated_words
-
     return result
 
 
@@ -36,7 +35,7 @@ def check_for_multiple_source_words(source_word: str, separator: str = ",") -> t
             word.strip() for word in source_word.split(separator)
         )
     else:
-        source_words = tuple(source_word)
+        source_words = (source_word,)
     return source_words
 
 

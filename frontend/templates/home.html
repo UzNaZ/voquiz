@@ -14,16 +14,16 @@
     integrity="sha384-…"
     crossorigin="anonymous"
   />
-  <link rel="stylesheet" href="{{ url_for('static', path="home.css") }}" />
+  <link rel="stylesheet" href="{{ url_for('static', path='home.css') }}" />
 </head>
 <body>
     <div class="parent">
         <div class="search-box d-flex flex-column align-items-center">
             <h1 class="mb-4 logo-text">VoQuiz</h1>
-            <form class="w-400 px-3" action="#" method="POST">
+            <form class="w-400 px-3" action="/api/" method="POST" onsubmit="console.log('Form submitting...')">
                 <input
                     type="search"
-                    name="q"
+                    name="url"
                     class="search-input"
                     placeholder="Enter your google table link..."
                     aria-label="Search"
@@ -32,14 +32,14 @@
                 <div class="d-flex gap-4 mt-5 mb-2">
                     <input
                         type="number"
-                        name="from"
+                        name="from_row"
                         class="page-input"
                         placeholder="From row"
                         min="1"
                     />
                     <input
                         type="number"
-                        name="to"
+                        name="to_row"
                         class="page-input"
                         placeholder="To row"
                         min="2"
@@ -47,12 +47,12 @@
                 </div>
                 <br />
                 <div class="d-flex gap-4 align-items-center mt-5">
-                    <select name="langFrom" id="from" class="lang-select">
+                    <select name="from_lang" id="from" class="lang-select">
                         <option value="uk">Ukrainian</option>
                         <option value="en">English</option>
                     </select>
                     <span class="arrow text-white fs-4">→</span>
-                    <select name="langTo" id="to" class="lang-select">
+                    <select name="to_lang" id="to" class="lang-select">
                         <option value="en">English</option>
                         <option value="uk">Ukrainian</option>
                     </select>
@@ -90,18 +90,6 @@
     fromSel.addEventListener('change', syncTo);
     toSel.addEventListener('change', syncFrom);
     syncTo();
-
-    const form = document.querySelector('form');
-    const startButton = document.getElementById('start-btn');
-
-    startButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.location.href = currentLocation;
-    });
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-    });
   });
   </script>
 </body>
