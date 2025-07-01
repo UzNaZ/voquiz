@@ -28,15 +28,26 @@ async def start_quiz(request: Request):
     sliced_spreadsheet_data = slice_dict(
         spreadsheet_data, *quiz_data["from_row_to_row"]
     )
-    serialized_data = check_for_multiple_translations(sliced_spreadsheet_data)
-    serialized_data = check_for_multiple_translations(serialized_data, "/")
-    shown_data = delete_words_without_translation(serialized_data)
-    clean_data = delete_explanations(serialized_data)
+    shown_data = sliced_spreadsheet_data
+    clean_data = delete_explanations(sliced_spreadsheet_data)
+    functions = (
+        check_for_multiple_translations,
+        lambda x: check_for_multiple_translations(x, "/"),
+        delete_words_without_translation
+    )
+
+    for func in functions:
+        shown_data = func(shown_data)
+        clean_data = func(clean_data)
+
     request.session["shown_data"] = shown_data
     request.session["clean_data"] = clean_data
-    quiz_keys = list(clean_data.keys())
-    random.shuffle(quiz_keys)
-    request.session["quiz_keys"] = quiz_keys
+    shown_data_keys = list(shown_data.keys())
+    clean_data_keys = list(clean_data.keys())
+    random.shuffle(clean_data_keys)
+    random.shuffle(shown_data_keys)
+    request.session["quiz_keys"] = shown_data_keys
+    request.session["clean_data_keys"] = clean_data_keys
     request.session["amount_of_questions"] = len(clean_data)
     request.session["correct_answers"] = 0
     url = request.url_for("get_question", index=0)
@@ -45,6 +56,7 @@ async def start_quiz(request: Request):
 
 @quiz_router.get("/quiz/question/{index}")
 async def get_question(index: int, request: Request):
+    request.session["current_index"] = index
     shown_data = request.session.get("shown_data")
     if not shown_data:
         url = request.url_for("start")
@@ -65,13 +77,41 @@ async def get_question(index: int, request: Request):
             "translations": current_value,
             "question_number": index + 1,
             "amount_of_questions": request.session.get("amount_of_questions"),
+            "is_correct": None,
         },
     )
 
 
 @quiz_router.post("/quiz/answer")
 async def submit_answer(request: Request, answer: QuizAnswer = Depends(validate_quiz_answer)):
-    translations = request.session.get("question_answers")[1]
-    if answer.answer in translations:
+    print(answer.answer)
+    current_index = request.session.get("current_index")
+    shown_data = request.session.get("shown_data")
+    clean_data = request.session.get("clean_data")
+    if not clean_data:
+        url = request.url_for("start")
+        return RedirectResponse(url, status_code=302)
+
+    quiz_keys = request.session.get("quiz_keys")
+    clean_data_keys = request.session.get("clean_data_keys")
+    current_shown_data_key = quiz_keys[current_index]
+    current_clean_data_key = clean_data_keys[current_index]
+    current_shown_source_word = check_for_multiple_source_words(current_shown_data_key)
+    current_clean_source_word = check_for_multiple_source_words(current_clean_data_key)
+    current_value = shown_data[current_shown_data_key]
+
+    clean_translations = clean_data[current_clean_data_key]
+    if is_correct := answer.answer in clean_translations:
         request.session["correct_answers"] = request.session.get("correct_answers") + 1
-    return Response(status_code=204)
+
+    return templates.TemplateResponse(
+        name="quiz.html",
+        request=request,
+        context={
+            "source_words": current_shown_source_word,
+            "translations": current_value,
+            "question_number": current_index + 1,
+            "amount_of_questions": request.session.get("amount_of_questions"),
+            "is_correct": is_correct,
+        },
+    )

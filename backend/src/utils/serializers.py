@@ -47,7 +47,7 @@ def delete_explanations(obj: any) -> any:
     :return: The cleaned version of the object with all parenthetical substrings removed.
     """
     if isinstance(obj, str):
-        return re.sub(AllRegexes.WORD_IN_PARENTHESES, "", obj)
+        return re.sub(AllRegexes.WORD_IN_PARENTHESES, "", obj).strip()
 
     elif isinstance(obj, tuple):
         return tuple(delete_explanations(item) for item in obj)

@@ -15,3 +15,9 @@ class AllRegexes:
     URL_HAS_SHEET_ID = r"/spreadsheets/d/[A-Za-z0-9-_]+/edit\?gid=([0-9]+)"
     URL_HAS_SPREADSHEET_ID = r"/spreadsheets/d/([A-Za-z0-9-_]+)"
     WORD_IN_PARENTHESES = r"\(.*?\)"
+
+
+@dataclass(frozen=True)
+class RedisData:
+    SESSION_COOKIE_NAME: str = "session_id"
+    SESSION_EXPIRE_IN_1_DAY: int = 60 * 60 * 24

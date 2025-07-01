@@ -198,5 +198,9 @@ body {
   margin-top: 0;
 }
 #filler {
-  margin-top: 1.6rem;
+  margin-top: 1.5rem;
+}
+.btn-next.disabled {
+  pointer-events: none;
+  opacity: 0.6;
 }
