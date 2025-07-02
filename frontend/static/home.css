@@ -154,3 +154,23 @@ body {
     transform: translateY(1px);
     box-shadow: 0 0.3rem 1rem rgba(3, 201, 136, 0.2), inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
   }
+.input-error {
+      border: 2px solid #D85D5D !important;
+      background-color: #fff0f0;
+  }
+.validation-msg {
+    color: #D85D5D;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    min-height: 1.2em; /* keep space even if empty */
+  }
+/* Make sure validation messages align below each input horizontally */
+.validation-msg-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+.validation-msg-container > div {
+    flex: 1;
+  }
