@@ -3,22 +3,24 @@ name = "voquiz"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "UzNaZ",email = "uzik.bs@gmail.com"},
-    {name = "iamnovichek",email="rungotika@gmail.com"}
+  { name = "UzNaZ", email = "uzik.bs@gmail.com" },
+  { name = "iamnovichek", email = "rungotika@gmail.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi[all] (>=0.115.12,<0.116.0)",
-    "sqlalchemy (>=2.0.41,<3.0.0)",
-    "black (>=25.1.0,<26.0.0)",
-    "isort (>=6.0.1,<7.0.0)",
-    "jinja2 (>=3.1.6,<4.0.0)",
-    "environs (>=14.2.0,<15.0.0)",
-    "redis (>=6.2.0,<7.0.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)"
+  "fastapi[all]>=0.115.12,<0.116.0",
+  "sqlalchemy>=2.0.41,<3.0.0",
+  "black>=25.1.0,<26.0.0",
+  "isort>=6.0.1,<7.0.0",
+  "jinja2>=3.1.6,<4.0.0",
+  "environs>=14.2.0,<15.0.0",
+  "redis>=6.2.0,<7.0.0",
+  "python-dotenv>=1.1.1,<2.0.0"
 ]
 
+[tool.poetry]
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
