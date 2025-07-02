@@ -12,7 +12,9 @@ templates = Jinja2Templates(directory="frontend/templates")
 
 
 @menu_router.get("/")
-async def start(request: Request):
+async def start(
+    request: Request, session_data: SessionData = Depends(get_session_data)
+):
     return templates.TemplateResponse(name="home.html", request=request)
 
 
@@ -22,6 +24,9 @@ async def send_quiz_data(
     session_data: SessionData = Depends(get_session_data),
     quiz_data: QuizData = Depends(validate_quiz_form),
 ):
-    session_data["quiz_data"] = quiz_data.dict()
+    session_data["quiz_data"] = quiz_data.model_dump(mode="json")
+    await session_data.save()
     url = request.url_for("start_quiz")
-    return RedirectResponse(url, status_code=302)
+    response = RedirectResponse(url, status_code=302)
+    session_data.set_cookie_on(response)
+    return response

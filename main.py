@@ -4,10 +4,10 @@ from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from dotenv import load_dotenv
 
+
+from backend.src.config import settings  # should be imported first
 from backend.src.api.endpoints import router as api_endpoint_router
-from backend.src.config import settings
 
 
 def initialize_backend_application() -> FastAPI:

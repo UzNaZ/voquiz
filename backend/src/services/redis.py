@@ -3,10 +3,11 @@ import os
 from typing import Any
 
 import redis.asyncio as redis
-from dotenv import load_dotenv
 from fastapi import Depends, Request, Response
 
 from backend.values import RedisData
+
+_redis_client = redis.from_url(os.environ.get("REDIS_URL"))
 
 
 class SessionData:
@@ -23,6 +24,7 @@ class SessionData:
         self._data = data
         self._response = response
         self._is_new = is_new
+        self._cookie_set = False
 
         if self._is_new:
             self._set_cookie()
@@ -32,10 +34,8 @@ class SessionData:
 
     def __setitem__(self, key: str, value: Any):
         self._data[key] = value
-        # Save immediately on set
-        import asyncio
-
-        asyncio.create_task(self._save())
+        # No auto-save! Call save() explicitly after all modifications.
+        print(key, value)
 
     def __contains__(self, key: str) -> bool:
         return key in self._data
@@ -44,7 +44,39 @@ class SessionData:
         return self._data.get(key, default)
 
     def _set_cookie(self):
-        self._response.set_cookie(
+        if not self._cookie_set:
+            self._response.set_cookie(
+                key=RedisData.SESSION_COOKIE_NAME,
+                value=self._session_id,
+                max_age=RedisData.SESSION_EXPIRE_IN_1_DAY,
+                httponly=True,
+                samesite="lax",
+            )
+            self._cookie_set = True
+
+    async def save(self):
+        try:
+            await self._redis.set(
+                self._session_id,
+                json.dumps(self._data),
+                ex=RedisData.SESSION_EXPIRE_IN_1_DAY,
+            )
+            # Only set cookie if session is new or explicitly requested
+            if self._is_new:
+                self._set_cookie()
+        except Exception as e:
+            print(f"[SessionData] Redis save error: {e}")
+
+    async def clear(self):
+        try:
+            await self._redis.delete(self._session_id)
+            self._response.delete_cookie(RedisData.SESSION_COOKIE_NAME)
+            self._data.clear()
+        except Exception as e:
+            print(f"[SessionData] Redis clear error: {e}")
+
+    def set_cookie_on(self, response: Response):
+        response.set_cookie(
             key=RedisData.SESSION_COOKIE_NAME,
             value=self._session_id,
             max_age=RedisData.SESSION_EXPIRE_IN_1_DAY,
@@ -52,22 +84,9 @@ class SessionData:
             samesite="lax",
         )
 
-    async def _save(self):
-        await self._redis.set(
-            self._session_id,
-            json.dumps(self._data),
-            ex=RedisData.SESSION_EXPIRE_IN_1_DAY,
-        )
-        self._set_cookie()
 
-    # Optional explicit save if you want
-    async def save(self):
-        await self._save()
-
-
-async def get_redis():
-    load_dotenv()
-    return redis.from_url(os.environ.get("REDIS_URL"))
+def get_redis():
+    return _redis_client
 
 
 async def get_session_data(
@@ -78,14 +97,21 @@ async def get_session_data(
         import uuid
 
         session_id = str(uuid.uuid4())
-        await redis.set(
-            session_id, json.dumps({}), ex=RedisData.SESSION_EXPIRE_IN_1_DAY
-        )
+        try:
+            await redis.set(
+                session_id, json.dumps({}), ex=RedisData.SESSION_EXPIRE_IN_1_DAY
+            )
+        except Exception as e:
+            print(f"[get_session_data] Redis set error: {e}")
         data = {}
         is_new = True
     else:
-        raw = await redis.get(session_id)
-        data = json.loads(raw) if raw else {}
+        try:
+            raw = await redis.get(session_id)
+            data = json.loads(raw) if raw else {}
+        except Exception as e:
+            print(f"[get_session_data] Redis get error: {e}")
+            data = {}
         is_new = False
 
     request.state.session_id = session_id

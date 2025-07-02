@@ -40,6 +40,7 @@ body {
   text-align: center;
   transition: transform 0.6s;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 .flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
@@ -52,6 +53,8 @@ body {
   backface-visibility: hidden;
   border-radius: 1rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.3);
+  transform-style: preserve-3d;
+  backface-visibility: hidden
 }
 .flip-card-front .card, .flip-card-back .card {
   height: 100%;
@@ -107,7 +110,7 @@ body {
 /* Reduce font-size dynamically for long strings */
 @media (max-width: 500px) {
   .question-text {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
   }
 }
 /* Optional: apply smaller text size if content is too long */
@@ -203,4 +206,10 @@ body {
 .btn-next.disabled {
   pointer-events: none;
   opacity: 0.6;
+}
+.question-text-wrapper {
+  height: 110px; /* Adjust as needed for your design */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

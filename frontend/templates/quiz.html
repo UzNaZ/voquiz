@@ -19,7 +19,7 @@
   <div class="parent">
     <div class="quiz-container d-flex flex-column align-items-center">
       <div
-        class="flip-card {% if is_correct is not none %}flipped{% endif %}"
+        class="flip-card"
         id="quiz-card"
         data-flippable="{{ 'true' if is_correct is not none else 'false' }}"
       >
@@ -31,7 +31,9 @@
                 <div class="score">{{ question_number }}/{{ amount_of_questions }}</div>
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Translate the word:</div>
-                <p class="card-text question-text mb-4">{{ ", ".join(source_words) }}</p>
+                <div class="question-text-wrapper">
+                  <p class="card-text question-text mb-4">{{ ", ".join(source_words) }}</p>
+                </div>
 
                 <form id="answer-form" method="POST" action="/api/quiz/answer">
                   <div class="input-wrapper mb-3">
@@ -45,7 +47,14 @@
                       autocomplete="off"
                     />
                   </div>
-                  <button type="submit" class="flip-instruction">Submit</button>
+                  <button
+                    type="submit"
+                    class="flip-instruction"
+                    id="submit-btn"
+                    {% if is_correct is not none %}disabled{% endif %}
+                  >
+                    Submit
+                  </button>
                 </form>
 
                 <a
@@ -86,8 +95,9 @@
 
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Correct answer:</div>
-                <p class="card-text question-text mb-4">{{ ", ".join(translations) }}</p>
-
+                <div class="question-text-wrapper">
+                  <p class="card-text question-text mb-4">{{ ", ".join(translations) }}</p>
+                </div>
                 <p id="filler"></p>
 
                 <div class="flip-instruction" id="flip-back">Flip back</div>
@@ -114,6 +124,15 @@
       const flipCard = document.getElementById('quiz-card');
       const answerInput = document.getElementById('answer-input');
       const flipBackBtn = document.getElementById('flip-back');
+      const answerForm = document.getElementById('answer-form');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // On page load, add flipped class with delay if flippable
+      if (flipCard.getAttribute('data-flippable') === 'true') {
+        setTimeout(() => {
+          flipCard.classList.add('flipped');
+        }, 50);
+      }
 
       // Flip on card click (but not on inputs or buttons)
       flipCard.addEventListener('click', (e) => {
@@ -125,7 +144,9 @@
           e.target.closest('a') ||
           e.target.closest('#flip-back')
         ) return;
-        flipCard.classList.toggle('flipped');
+        setTimeout(() => {
+          flipCard.classList.toggle('flipped');
+        }, 100);
       });
 
       // Allow flip-back manually
@@ -140,7 +161,7 @@
       const questionTextEls = document.querySelectorAll('.question-text');
       questionTextEls.forEach((el) => {
         const len = el.textContent.length;
-        if (len > 20) el.classList.add('long-text');
+        if (len > 15) el.classList.add('long-text');
         if (len > 30) el.classList.add('very-long-text');
       });
     });

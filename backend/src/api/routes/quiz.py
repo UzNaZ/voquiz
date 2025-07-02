@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -13,7 +13,6 @@ from backend.src.utils.serializers import (check_for_multiple_source_words,
                                            slice_dict)
 from backend.src.utils.spreadsheets_data import get_sheet_data
 from backend.src.utils.validators import validate_quiz_answer
-from backend.values import RedisData
 
 quiz_router = APIRouter()
 templates = Jinja2Templates(directory="frontend/templates")
@@ -56,6 +55,7 @@ async def start_quiz(
     session_data["clean_data_keys"] = clean_data_keys
     session_data["amount_of_questions"] = len(clean_data)
     session_data["correct_answers"] = 0
+    await session_data.save()
     url = request.url_for("get_question", index=0)
     return RedirectResponse(url, status_code=302)
 
@@ -71,12 +71,19 @@ async def get_question(
         return RedirectResponse(url, status_code=302)
     quiz_keys = session_data.get("quiz_keys")
     if index + 1 > len(quiz_keys):
-        return templates.TemplateResponse(name="end.html", request=request)
+        correct_answers = session_data.get("correct_answers", 0)
+        await session_data.clear()
+        return templates.TemplateResponse(
+            name="end.html",
+            request=request,
+            context={"correct_answers": correct_answers},
+        )
 
     current_key = quiz_keys[index]
     current_value = shown_data[current_key]
     current_source_word = check_for_multiple_source_words(current_key)
     session_data["question_answers"] = (current_source_word, current_value)
+    await session_data.save()
     return templates.TemplateResponse(
         name="quiz.html",
         request=request,
@@ -113,6 +120,7 @@ async def submit_answer(
     if is_correct := answer.answer in clean_translations:
         session_data["correct_answers"] = session_data.get("correct_answers") + 1
 
+    await session_data.save()
     return templates.TemplateResponse(
         name="quiz.html",
         request=request,
