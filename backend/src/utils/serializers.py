@@ -86,4 +86,11 @@ def slice_dict(dict_obj: dict, start: int, stop: int) -> dict:
     :param stop: finishing point
     :return: A filtered dictionary excluding entries without the source word or translations.
     """
-    return dict(list(dict_obj.items())[start - 1 : stop])
+    dict_len = len(dict_obj.items())
+    if stop > dict_len:
+        stop = dict_len
+
+    if stop - start > 100:
+        stop = start + 100
+
+    return dict(list(dict_obj.items())[start - 1:stop])
