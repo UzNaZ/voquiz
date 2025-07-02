@@ -13,7 +13,7 @@ from backend.src.api.endpoints import router as api_endpoint_router
 def initialize_backend_application() -> FastAPI:
     app = FastAPI()
     app.include_router(router=api_endpoint_router, prefix=settings.API_PREFIX)
-    app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SESSION_SECRET_KEY"))
+    app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY"))
     return app
 
 
