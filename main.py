@@ -22,4 +22,5 @@ backend_app.mount("/static", StaticFiles(directory="frontend/static"), name="sta
 backend_app.mount("/images", StaticFiles(directory="frontend/images"), name="images")
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:backend_app", reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app="main:backend_app", host="0.0.0.0", port=port)
