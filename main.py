@@ -1,19 +1,19 @@
+import os
+
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from environs import Env
+from dotenv import load_dotenv
 
 from backend.src.api.endpoints import router as api_endpoint_router
 from backend.src.config import settings
 
 
 def initialize_backend_application() -> FastAPI:
-    env = Env()
-    env.read_env()
     app = FastAPI()
     app.include_router(router=api_endpoint_router, prefix=settings.API_PREFIX)
-    app.add_middleware(SessionMiddleware, secret_key=env.str("SESSION_SECRET_KEY"))
+    app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SESSION_SECRET_KEY"))
     return app
 
 

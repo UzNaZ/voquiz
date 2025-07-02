@@ -2,7 +2,8 @@ from typing import Literal
 
 from fastapi import Form
 
-from backend.src.models.schemas.pydantic_schemas.quiz_data import QuizData, QuizAnswer
+from backend.src.models.schemas.pydantic_schemas.quiz_data import (QuizAnswer,
+                                                                   QuizData)
 
 
 async def validate_quiz_form(

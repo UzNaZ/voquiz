@@ -23,17 +23,21 @@ def check_for_multiple_translations(
                 word.strip() for word in translated_word.split(separator)
             )
         else:
-            translated_words = (translated_word,) if isinstance(translated_word, str) else translated_word
+            translated_words = (
+                (translated_word,)
+                if isinstance(translated_word, str)
+                else translated_word
+            )
 
         result[source_word] = translated_words
     return result
 
 
-def check_for_multiple_source_words(source_word: str, separator: str = ",") -> tuple[str, ...]:
+def check_for_multiple_source_words(
+    source_word: str, separator: str = ","
+) -> tuple[str, ...]:
     if separator in source_word:
-        source_words = tuple(
-            word.strip() for word in source_word.split(separator)
-        )
+        source_words = tuple(word.strip() for word in source_word.split(separator))
     else:
         source_words = (source_word,)
     return source_words
@@ -82,4 +86,4 @@ def slice_dict(dict_obj: dict, start: int, stop: int) -> dict:
     :param stop: finishing point
     :return: A filtered dictionary excluding entries without the source word or translations.
     """
-    return dict(list(dict_obj.items())[start-1:stop])
+    return dict(list(dict_obj.items())[start - 1 : stop])
