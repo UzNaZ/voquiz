@@ -100,7 +100,7 @@
       const fromMsg = document.getElementById("from-msg");
       const toMsg = document.getElementById("to-msg");
 
-      const spreadsheetRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[\w-]+\/.*[\?&]gid=\d+/;
+      const spreadsheetRegex = /^https://docs\.google\.com/spreadsheets/d/[\w-]+/[^?]*\?([^#]*&)?gid=\d+(&[^#]*)?(#.*)?$/;
 
       form.addEventListener("submit", (e) => {
         let isValid = true;

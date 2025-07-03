@@ -117,7 +117,7 @@ async def submit_answer(
     current_shown_source_word = check_for_multiple_source_words(current_shown_data_key)
     current_value = shown_data[current_shown_data_key]
     clean_translations = clean_data[current_clean_data_key]
-    if is_correct := answer.answer in clean_translations:
+    if is_correct := answer.answer.lower().strip() in clean_translations:
         session_data["correct_answers"] = session_data.get("correct_answers") + 1
 
     await session_data.save()
