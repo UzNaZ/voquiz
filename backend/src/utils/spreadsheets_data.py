@@ -32,9 +32,9 @@ def get_spreadsheet_id(link: str):
     :param link: A string containing the Google Sheets URL.
     :return: The spreadsheet ID as a string if found, otherwise None.
     """
-    if matches := re.search(AllRegexes.URL_HAS_SPREADSHEET_ID, link):
-        spreadsheet_id = matches.group(Spreadsheets.ID_FROM_URL_GROUP)
-        return spreadsheet_id
+    matches = re.search(AllRegexes.URL_HAS_SPREADSHEET_ID, link)
+    spreadsheet_id = matches.group(Spreadsheets.ID_FROM_URL_GROUP)
+    return spreadsheet_id
 
 
 async def get_sheet_id(link: str):
@@ -44,9 +44,9 @@ async def get_sheet_id(link: str):
     :param link: A string containing the Google Sheets URL.
     :return: The sheet ID (gid) as a string if found, otherwise None.
     """
-    if matches := re.search(AllRegexes.URL_HAS_SHEET_ID, link):
-        gid = matches.group(Spreadsheets.ID_FROM_URL_GROUP)
-        return gid
+    matches = re.search(AllRegexes.URL_HAS_SHEET_ID, link)
+    gid = matches.group(Spreadsheets.ID_FROM_URL_GROUP)
+    return gid
 
 
 async def get_sheet_data(

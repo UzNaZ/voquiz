@@ -39,7 +39,6 @@ class SessionData:
     def __setitem__(self, key: str, value: Any):
         self._data[key] = value
         # No auto-save! Call save() explicitly after all modifications.
-        print(key, value)
 
     def __contains__(self, key: str) -> bool:
         return key in self._data
@@ -52,7 +51,7 @@ class SessionData:
             self._response.set_cookie(
                 key=RedisData.SESSION_COOKIE_NAME,
                 value=self._session_id,
-                max_age=RedisData.SESSION_EXPIRE_IN_1_DAY,
+                max_age=RedisData.SESSION_EXPIRE_IN_2_HOURS,
                 httponly=True,
                 samesite="lax",
             )
@@ -63,7 +62,7 @@ class SessionData:
             await self._redis.set(
                 self._session_id,
                 json.dumps(self._data),
-                ex=RedisData.SESSION_EXPIRE_IN_1_DAY,
+                ex=RedisData.SESSION_EXPIRE_IN_2_HOURS,
             )
             # Only set cookie if session is new or explicitly requested
             if self._is_new:
@@ -83,7 +82,7 @@ class SessionData:
         response.set_cookie(
             key=RedisData.SESSION_COOKIE_NAME,
             value=self._session_id,
-            max_age=RedisData.SESSION_EXPIRE_IN_1_DAY,
+            max_age=RedisData.SESSION_EXPIRE_IN_2_HOURS,
             httponly=True,
             samesite="lax",
         )
@@ -103,7 +102,7 @@ async def get_session_data(
         session_id = str(uuid.uuid4())
         try:
             await redis.set(
-                session_id, json.dumps({}), ex=RedisData.SESSION_EXPIRE_IN_1_DAY
+                session_id, json.dumps({}), ex=RedisData.SESSION_EXPIRE_IN_2_HOURS
             )
         except Exception as e:
             print(f"[get_session_data] Redis set error: {e}")

@@ -12,7 +12,8 @@ class Spreadsheets:
 
 @dataclass(frozen=True)
 class AllRegexes:
-    URL_HAS_SHEET_ID = r"/spreadsheets/d/[A-Za-z0-9-_]+/edit\?gid=([0-9]+)"
+    SPREADSHEET_LINK = r"^https://docs\.google\.com/spreadsheets/d/[\w-]+/[^?]*\?([^#]*&)?gid=\d+(&[^#]*)?(#.*)?$"
+    URL_HAS_SHEET_ID = r"/spreadsheets/d/[A-Za-z0-9\-_]+/edit\?(?:[^#]*&)?gid=([0-9]+)(?:[&#]|$)"
     URL_HAS_SPREADSHEET_ID = r"/spreadsheets/d/([A-Za-z0-9-_]+)"
     WORD_IN_PARENTHESES = r"\(.*?\)"
 
@@ -20,4 +21,4 @@ class AllRegexes:
 @dataclass(frozen=True)
 class RedisData:
     SESSION_COOKIE_NAME: str = "session_id"
-    SESSION_EXPIRE_IN_1_DAY: int = 60 * 60 * 24
+    SESSION_EXPIRE_IN_2_HOURS: int = 60 * 60 * 2
