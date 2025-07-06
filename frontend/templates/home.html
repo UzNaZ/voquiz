@@ -20,7 +20,7 @@
   <div class="parent">
     <div class="search-box d-flex flex-column align-items-center">
       <h1 class="mb-4 logo-text">VoQuiz</h1>
-      <form class="w-400 px-3" id="quiz-settings-form" action="/api/" method="POST">
+      <form class="quiz-settings-form w-400 px-3" id="quiz-settings-form" action="/api/" method="POST">
         <input
           type="search"
           name="url"
@@ -100,7 +100,7 @@
       const fromMsg = document.getElementById("from-msg");
       const toMsg = document.getElementById("to-msg");
 
-      const spreadsheetRegex = /^https://docs\.google\.com/spreadsheets/d/[\w-]+/[^?]*\?([^#]*&)?gid=\d+(&[^#]*)?(#.*)?$/;
+      const spreadsheetRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[\w-]+(?:\/[^\s?#]*)?\?[^#]*\bgid=\d+/;
 
       form.addEventListener("submit", (e) => {
         let isValid = true;
@@ -109,71 +109,68 @@
         const fromRow = fromRowInput.value.trim();
         const toRow = toRowInput.value.trim();
 
-        [urlInput, fromRowInput, toRowInput].forEach((el) =>
-          el.classList.remove("input-error")
-        );
-        [urlMsg, fromMsg, toMsg].forEach((msg) => (msg.textContent = ""));
+        // Reset error states
+        [urlInput, fromRowInput, toRowInput].forEach(el => el.classList.remove("input-error"));
+        [urlMsg, fromMsg, toMsg].forEach(msg => msg.textContent = "");
 
-        // URL validation
+        // Validate URL
         if (!url) {
           urlMsg.textContent = "URL is required.";
           urlInput.classList.add("input-error");
           isValid = false;
         } else if (!spreadsheetRegex.test(url)) {
-          urlMsg.textContent = "Must be a valid Google Spreadsheet URL.";
+          urlMsg.textContent = "Must be a valid Google Spreadsheet URL with gid.";
           urlInput.classList.add("input-error");
           isValid = false;
         }
 
-        // From row validation
+        // Validate From Row
+        const fromRowVal = parseInt(fromRow, 10);
         if (!fromRow) {
           fromMsg.textContent = "Start row is required.";
           fromRowInput.classList.add("input-error");
           isValid = false;
-        } else if (!/^\d+$/.test(fromRow) || parseInt(fromRow) < 1) {
+        } else if (isNaN(fromRowVal) || fromRowVal < 1) {
           fromMsg.textContent = "Must be a positive integer.";
           fromRowInput.classList.add("input-error");
           isValid = false;
         }
 
-        // To row validation
+        // Validate To Row
+        const toRowVal = parseInt(toRow, 10);
         if (!toRow) {
           toMsg.textContent = "End row is required.";
           toRowInput.classList.add("input-error");
           isValid = false;
-        } else if (!/^\d+$/.test(toRow) || parseInt(toRow) < 2) {
+        } else if (isNaN(toRowVal) || toRowVal < 2) {
           toMsg.textContent = "Must be a positive integer (at least 2).";
           toRowInput.classList.add("input-error");
           isValid = false;
-        } else if (parseInt(toRow) < parseInt(fromRow)) {
+        } else if (!isNaN(fromRowVal) && toRowVal < fromRowVal) {
           toMsg.textContent = "End row must be ≥ start row.";
           toRowInput.classList.add("input-error");
           isValid = false;
         }
 
         if (!isValid) {
-          e.preventDefault();
+          e.preventDefault(); // Block form submission
         }
       });
 
-      // Language select sync
+      // Sync language selects
       const fromSel = document.getElementById("from");
       const toSel = document.getElementById("to");
 
-      function syncTo() {
-        if (fromSel.value === toSel.value) {
-          toSel.value = fromSel.value === "en" ? "uk" : "en";
-        }
-      }
-      function syncFrom() {
-        if (toSel.value === fromSel.value) {
-          fromSel.value = toSel.value === "en" ? "uk" : "en";
+      function syncLang(from, to) {
+        if (from.value === to.value) {
+          to.value = from.value === "en" ? "uk" : "en";
         }
       }
 
-      fromSel.addEventListener("change", syncTo);
-      toSel.addEventListener("change", syncFrom);
-      syncTo();
+      fromSel.addEventListener("change", () => syncLang(fromSel, toSel));
+      toSel.addEventListener("change", () => syncLang(toSel, fromSel));
+
+      syncLang(fromSel, toSel); // Initial sync
     });
   </script>
 </body>

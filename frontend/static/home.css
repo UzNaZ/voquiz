@@ -159,12 +159,18 @@ body {
       background-color: #fff0f0;
   }
 .validation-msg {
-    color: #D85D5D;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-    text-align: center;
-    min-height: 1.2em; /* keep space even if empty */
-  }
+  color: #ff4d4f;
+  font-size: 0.95rem;
+  margin-top: 4px;
+  min-height: 1.4em;
+  line-height: 1.4em;
+  white-space: normal;
+  word-break: break-word;
+}
+.input-error {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 77, 79, 0.25);
+}
 /* Make sure validation messages align below each input horizontally */
 .validation-msg-container {
     display: flex;
@@ -174,3 +180,39 @@ body {
 .validation-msg-container > div {
     flex: 1;
   }
+
+@media (max-width: 389px) {
+  .parent {
+    font-size: 0.92rem;
+  }
+  .logo-text {
+    font-size: 2.1rem;
+    margin-bottom: 0.7rem;
+  }
+  .search-box,
+  .quiz-settings-form {
+    max-width: 97vw;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+  }
+  .search-input {
+    max-width: 100% !important;
+    width: 100%;
+    min-width: 0;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    box-sizing: border-box;
+  }
+  .page-input {
+    max-width: 48%;      /* Allow two to fit side by side with gap */
+    width: 100%;
+    min-width: 0;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    box-sizing: border-box;
+  }
+  .btn-start {
+    font-size: 1.15rem;
+    padding: 0.5rem 1.2rem;
+  }
+}

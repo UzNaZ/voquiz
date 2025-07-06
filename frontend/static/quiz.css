@@ -23,15 +23,54 @@ body {
   letter-spacing: -0.5px;
   font-size: 3.5rem;
   color: #03C988;
-  margin-bottom: 1rem
+  margin-top: 0; /* or even 0 */
+  margin-bottom: 1rem;
+}
+@media (max-width: 600px) {
+  .logo-text {
+    margin-bottom: 0.5rem;
+  }
 }
 /* Flip Card CSS */
 .flip-card {
   width: 450px;
   height: 550px;
+  max-width: 100vw;
+  max-height: 100vh;
   perspective: 1000px;
   cursor: pointer;
   margin: 0 auto;
+}
+@media (max-width: 600px) {
+  .flip-card {
+    width: 96vw;
+    height: 140vw;      /* Increased height for more content space */
+    max-width: 98vw;
+    max-height: 95vh;   /* Prevents overflow on very short screens */
+  }
+  .flip-card-inner {
+    transform: scale(0.98); /* Less aggressive scaling, keeps content readable */
+    transform-origin: top center;
+  }
+
+  .btn-next,
+  .flip-instruction {
+    font-size: 1rem;
+    padding: 0.7rem 0;
+    margin: 1.2rem auto 0 auto; /* Top margin, centered horizontally */
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .flip-card-front .card-body,
+  .flip-card-back .card-body {
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.5rem;
+  }
+  .question-text-wrapper {
+    height: 70px;
+  }
 }
 .flip-card-inner {
   position: relative;
@@ -68,6 +107,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   height: 100%;
   position: relative;
   padding: 2rem 1.5rem;
@@ -140,6 +180,7 @@ body {
 }
 /* Button-like flip instruction */
 .flip-instruction {
+  width: 50%;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 0.75rem;
@@ -157,7 +198,11 @@ body {
   transform: translateY(-1px);
 }
 .btn-next {
-  display: inline-block;
+  width: 100%;
+  max-width: 18rem; /* or whatever looks best, e.g. 300px */
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
   text-decoration: none;
   background-color: #03C988;
   color: white;
@@ -170,7 +215,7 @@ body {
   cursor: pointer;
   box-shadow: 0 0.5rem 1.5rem rgba(3, 201, 136, 0.3);
   transition: all 0.2s ease;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
 }
 .btn-next:hover {
   background-color: #02b77a;
@@ -185,14 +230,16 @@ body {
 }
 
 #correctness-sign {
-   text-align: center;
-   margin-top: -1.5rem
+  text-align: center;
+  margin-top: -4.5rem; /* Small top margin */
+  margin-bottom: 1rem; /* Space below the sign */
 }
 .flip-card-front .card-body,
 .flip-card-back .card-body {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* change from center to flex-start */
+  justify-content: center;
+  align-items: center;
   height: 100%;
   position: relative;
   padding: 2rem 1.5rem;
