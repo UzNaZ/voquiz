@@ -1,6 +1,6 @@
 import re
 
-from backend.values import AllRegexes
+from backend.values import AllRegexes, Spreadsheets
 
 AnswerOrAnswers = str | tuple
 UkAndEnWords = dict[AnswerOrAnswers, AnswerOrAnswers]
@@ -90,7 +90,7 @@ def slice_dict(dict_obj: dict, start: int, stop: int) -> dict:
     if stop > dict_len:
         stop = dict_len
 
-    if stop - start > 100:
-        stop = start + 100
+    if stop - start > Spreadsheets.MAX_QUESTIONS:
+        stop = start + Spreadsheets.MAX_QUESTIONS
 
-    return dict(list(dict_obj.items())[start - 1:stop])
+    return dict(list(dict_obj.items())[start - 1 : stop + 1])

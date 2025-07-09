@@ -8,12 +8,14 @@ from backend.src.models.schemas.pydantic_schemas.quiz_data import (QuizAnswer,
 
 async def validate_quiz_form(
     url: str = Form(...),
+    sheet_name: str = Form(default=""),
     from_row: int = Form(...),
     to_row: int = Form(...),
     from_lang: Literal["en", "uk"] = Form(...),
 ) -> QuizData:
     return QuizData(
         url=url,
+        sheet_name=sheet_name,
         from_row_to_row=(from_row, to_row),
         from_lang=from_lang,
     )

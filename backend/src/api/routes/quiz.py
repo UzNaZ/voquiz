@@ -11,7 +11,8 @@ from backend.src.utils.serializers import (check_for_multiple_source_words,
                                            delete_explanations,
                                            delete_words_without_translation,
                                            slice_dict)
-from backend.src.utils.spreadsheets_data import get_sheet_data
+from backend.src.utils.spreadsheets_data import (get_sheet_data,
+                                                 get_sheet_data_by_name)
 from backend.src.utils.validators import validate_quiz_answer
 
 quiz_router = APIRouter()
@@ -25,7 +26,12 @@ async def start_quiz(
     quiz_data = session_data.get("quiz_data")
     url = quiz_data["url"]
     from_lang = quiz_data["from_lang"]
-    spreadsheet_data = await get_sheet_data(url, from_lang)
+    sheet_name = quiz_data["sheet_name"].strip()
+    if sheet_name:
+        spreadsheet_data = await get_sheet_data_by_name(url, from_lang, sheet_name)
+    else:
+        spreadsheet_data = await get_sheet_data(url, from_lang)
+
     if not spreadsheet_data:
         raise ValueError("spreadsheet by this url does not exist")
     sliced_spreadsheet_data = slice_dict(

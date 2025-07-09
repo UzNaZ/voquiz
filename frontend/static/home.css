@@ -4,160 +4,164 @@ html, body {
 }
 
 body {
-    background-color: #35374B;
-  }
+  background-color: #35374B;
+}
 
-  .search-input {
-    width: 100%;
-    max-width: 60rem;
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 1.5rem;
-    box-shadow: 0 0.5rem 1.5rem #344955;
-    font-size: 1rem;
-    text-align: center;
-    transition: all 0.2s ease;
-  }
-  .search-input:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
-  }
-  .search-input:focus {
-    outline: none;
-    box-shadow: 0 0.6rem 1.8rem #344955, 0 0 0 0.25rem rgba(52, 73, 85, 0.25);
-    transform: translateY(-2px);
-  }
-  .search-input:active {
-    transform: translateY(0);
-    box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
-  }
+.search-input {
+  width: 100%;
+  max-width: 60rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 0.5rem 1.5rem #344955;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.search-input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
+}
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0.6rem 1.8rem #344955, 0 0 0 0.25rem rgba(52, 73, 85, 0.25);
+  transform: translateY(-2px);
+}
+.search-input:active {
+  transform: translateY(0);
+  box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}
 
-  .lang-select {
-    width: auto;
-    max-width: 12rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 1.5rem;
-    box-shadow: 0 0.5rem 1.5rem #344955;
-    background-color: #fff;
-    text-align: center;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    transition: all 0.2s ease;
-  }
+/* Extra input reveal animation */
+#extra-input-container {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.7s ease, opacity 0.7s ease, margin-bottom 0.7s ease;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+}
+#extra-input-container.show {
+  max-height: 100%; /* enough to fully reveal the input + margin + validation */
+  opacity: 1;
+  padding-top: 0.25rem;
+}
+.lang-select {
+  width: auto;
+  max-width: 12rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 0.5rem 1.5rem #344955;
+  background-color: #fff;
+  text-align: center;
+  appearance: none;
+  transition: all 0.2s ease;
+}
 
-  .lang-select:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
-  }
+.lang-select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
+}
+.lang-select:focus {
+  outline: none;
+  box-shadow: 0 0.6rem 1.8rem #344955, 0 0 0 0.25rem rgba(52, 73, 85, 0.25);
+  transform: translateY(-2px);
+}
+.lang-select:active {
+  transform: translateY(0);
+  box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}
 
-  .lang-select:focus {
-    outline: none;
-    box-shadow:
-      0 0.6rem 1.8rem #344955,
-      0 0 0 0.25rem rgba(52, 73, 85, 0.25);
-    transform: translateY(-2px);
-  }
+.search-box {
+  text-align: center;
+}
 
-  .lang-select:active {
-    transform: translateY(0);
-    box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
-  }
+.parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-  .search-box {
-    text-align: center;
-  }
+.arrow {
+  margin: 0 0.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
 
-  .parent {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+.page-input {
+  width: 100%;
+  max-width: 10rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 0.5rem 1.5rem #344955;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.page-input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
+}
+.page-input:focus {
+  outline: none;
+  box-shadow: 0 0.6rem 1.8rem #344955, 0 0 0 0.25rem rgba(52, 73, 85, 0.25);
+  transform: translateY(-2px);
+}
+.page-input:active {
+  transform: translateY(0);
+  box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}
 
-  .arrow {
-    margin: 0 0.5rem;
-    font-size: 1.5rem;
-    line-height: 1;
-  }
+.spacer-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 2rem 0;
+  box-shadow: 0 0.1rem 0.5rem rgba(255, 255, 255, 0.1);
+}
 
-  .page-input {
-    width: 100%;
-    max-width: 10rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 1.5rem;
-    box-shadow: 0 0.5rem 1.5rem #344955;
-    font-size: 1rem;
-    text-align: center;
-    transition: all 0.2s ease;
-  }
+.logo-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  font-size: 3.5rem;
+  color: #03C988;
+}
 
-  .page-input:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.6rem 1.8rem rgba(52, 73, 85, 0.7), 0 0 0.5rem rgba(255, 255, 255, 0.1);
-  }
+.btn-start {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #03C988;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.75rem 2.5rem;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 0.5rem 1.5rem rgba(3, 201, 136, 0.3);
+  transition: all 0.2s ease;
+}
+.btn-start:hover {
+  background-color: #02b77a;
+  transform: translateY(-2px);
+  box-shadow: 0 0.6rem 1.8rem rgba(3, 201, 136, 0.6), 0 0 0.5rem rgba(3, 201, 136, 0.4);
+  color: white;
+  text-decoration: none;
+}
+.btn-start:active {
+  transform: translateY(1px);
+  box-shadow: 0 0.3rem 1rem rgba(3, 201, 136, 0.2), inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}
 
-  .page-input:focus {
-    outline: none;
-    box-shadow: 0 0.6rem 1.8rem #344955, 0 0 0 0.25rem rgba(52, 73, 85, 0.25);
-    transform: translateY(-2px);
-  }
-
-  .page-input:active {
-    transform: translateY(0);
-    box-shadow: 0 0.3rem 1rem #344955, inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
-  }
-
-  .spacer-divider {
-    height: 1px;
-    background-color: rgba(255, 255, 255, 0.2);
-    width: 100%;
-    margin: 2rem 0;
-    box-shadow: 0 0.1rem 0.5rem rgba(255, 255, 255, 0.1);
-  }
-
-  .logo-text {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    font-size: 3.5rem;
-    color: #03C988;
-  }
-
-  .btn-start {
-    display: inline-block;
-    text-decoration: none;
-    background-color: #03C988;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 1.25rem;
-    padding: 0.75rem 2.5rem;
-    border: none;
-    border-radius: 1.5rem;
-    cursor: pointer;
-    box-shadow: 0 0.5rem 1.5rem rgba(3, 201, 136, 0.3);
-    transition: all 0.2s ease;
-  }
-
-  .btn-start:hover {
-    background-color: #02b77a;
-    transform: translateY(-2px);
-    box-shadow: 0 0.6rem 1.8rem rgba(3, 201, 136, 0.6), 0 0 0.5rem rgba(3, 201, 136, 0.4);
-    color: white;
-    text-decoration: none;
-  }
-
-  .btn-start:active {
-    transform: translateY(1px);
-    box-shadow: 0 0.3rem 1rem rgba(3, 201, 136, 0.2), inset 0 0 0.5rem rgba(0, 0, 0, 0.1);
-  }
 .input-error {
-      border: 2px solid #D85D5D !important;
-      background-color: #fff0f0;
-  }
+  border: 2px solid #D85D5D !important;
+  background-color: #fff0f0;
+}
 .validation-msg {
   color: #ff4d4f;
   font-size: 0.95rem;
@@ -173,13 +177,13 @@ body {
 }
 /* Make sure validation messages align below each input horizontally */
 .validation-msg-container {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 .validation-msg-container > div {
-    flex: 1;
-  }
+  flex: 1;
+}
 
 @media (max-width: 389px) {
   .parent {
@@ -204,7 +208,7 @@ body {
     box-sizing: border-box;
   }
   .page-input {
-    max-width: 48%;      /* Allow two to fit side by side with gap */
+    max-width: 48%;
     width: 100%;
     min-width: 0;
     font-size: 0.95rem;

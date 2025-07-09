@@ -8,12 +8,15 @@ class Spreadsheets:
     EN_COLUMN_NUMBER = 1
     UK_COLUMN_NUMBER = 3
     ID_FROM_URL_GROUP = 1
+    MAX_QUESTIONS = 100
 
 
 @dataclass(frozen=True)
 class AllRegexes:
-    SPREADSHEET_LINK = r"^https://docs\.google\.com/spreadsheets/d/[\w-]+/[^?]*\?([^#]*&)?gid=\d+(&[^#]*)?(#.*)?$"
-    URL_HAS_SHEET_ID = r"/spreadsheets/d/[A-Za-z0-9\-_]+/edit\?(?:[^#]*&)?gid=([0-9]+)(?:[&#]|$)"
+    SPREADSHEET_LINK = (
+        r"^https://docs\.google\.com/spreadsheets/d/[\w-]+(?:/[^\s?#]*)?(?:\?[^#]*)?$"
+    )
+    URL_HAS_SHEET_ID = r"/spreadsheets/d/[\w-]+(?:/[^\s?#]*)?(?:\?[^#]*)?.*gid=\d+"
     URL_HAS_SPREADSHEET_ID = r"/spreadsheets/d/([A-Za-z0-9-_]+)"
     WORD_IN_PARENTHESES = r"\(.*?\)"
 

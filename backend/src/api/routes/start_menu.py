@@ -21,7 +21,7 @@ async def send_quiz_data(
     session_data: SessionData = Depends(get_session_data),
     quiz_data: QuizData = Depends(validate_quiz_form),
 ):
-    session_data["quiz_data"] = quiz_data.model_dump(mode="json")
+    session_data["quiz_data"] = quiz_data.model_dump()
     await session_data.save()
     url = request.url_for("start_quiz")
     response = RedirectResponse(url, status_code=302)

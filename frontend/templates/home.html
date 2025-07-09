@@ -11,7 +11,6 @@
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
-    integrity="sha384-…"
     crossorigin="anonymous"
   />
   <link rel="stylesheet" href="{{ url_for('static', path='home.css') }}" />
@@ -21,18 +20,34 @@
     <div class="search-box d-flex flex-column align-items-center">
       <h1 class="mb-4 logo-text">VoQuiz</h1>
       <form class="quiz-settings-form w-400 px-3" id="quiz-settings-form" action="/api/" method="POST">
-        <input
-          type="search"
-          name="url"
-          id="url"
-          class="search-input"
-          placeholder="Enter your google table link..."
-          aria-label="Search"
-          required
-        />
-        <div class="validation-msg" id="url-msg"></div>
 
+        <!-- Grouped input block -->
+        <div id="url-group" class="d-flex flex-column w-100" style="gap: 0.25rem;">
+          <div id="extra-input-container">
+            <input
+              type="search"
+              id="extra-input"
+              name="sheet_name"
+              class="search-input"
+              placeholder="Enter Sheet Name..."
+              aria-label="Search"
+            />
+            <div class="validation-msg" id="extra-msg"></div>
+          </div>
 
+          <input
+            type="search"
+            name="url"
+            id="url"
+            class="search-input"
+            placeholder="Enter your google table link..."
+            aria-label="Search"
+            required
+          />
+          <div class="validation-msg" id="url-msg"></div>
+        </div>
+
+        <!-- From/To Row Inputs -->
         <div class="d-flex gap-4 mt-5 mb-2">
           <input
             type="number"
@@ -55,14 +70,11 @@
         </div>
 
         <div class="validation-msg-container">
-          <div>
-            <div class="validation-msg" id="from-msg"></div>
-          </div>
-          <div>
-            <div class="validation-msg" id="to-msg"></div>
-          </div>
+          <div><div class="validation-msg" id="from-msg"></div></div>
+          <div><div class="validation-msg" id="to-msg"></div></div>
         </div>
 
+        <!-- Language Selects -->
         <div class="d-flex gap-4 align-items-center mt-5">
           <select name="from_lang" id="from" class="lang-select">
             <option value="uk">Ukrainian</option>
@@ -77,6 +89,7 @@
 
         <br />
 
+        <!-- Submit Button -->
         <div class="mt-5 pt-3">
           <button type="submit" class="btn-start" id="start-btn">Start</button>
         </div>
@@ -89,89 +102,123 @@
     crossorigin="anonymous"
   ></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("quiz-settings-form");
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("quiz-settings-form");
 
-      const urlInput = document.getElementById("url");
-      const fromRowInput = document.getElementById("from_row");
-      const toRowInput = document.getElementById("to_row");
+    const urlInput = document.getElementById("url");
+    const fromRowInput = document.getElementById("from_row");
+    const toRowInput = document.getElementById("to_row");
 
-      const urlMsg = document.getElementById("url-msg");
-      const fromMsg = document.getElementById("from-msg");
-      const toMsg = document.getElementById("to-msg");
+    const urlMsg = document.getElementById("url-msg");
+    const fromMsg = document.getElementById("from-msg");
+    const toMsg = document.getElementById("to-msg");
 
-      const spreadsheetRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[\w-]+(?:\/[^\s?#]*)?\?[^#]*\bgid=\d+/;
+    const extraContainer = document.getElementById("extra-input-container");
+    const extraInput = document.getElementById("extra-input");
+    const extraMsg = document.getElementById("extra-msg");
 
-      form.addEventListener("submit", (e) => {
-        let isValid = true;
+    const spreadsheetRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[\w-]+(?:\/[^\s?#]*)?\?[^#]*\bgid=\d+/;
+    const spreadsheetWithNoGidRegex = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[\w-]+(?:\/[^\s?#]*)?(?:\?[^#]*)?$/;
 
-        const url = urlInput.value.trim();
-        const fromRow = fromRowInput.value.trim();
-        const toRow = toRowInput.value.trim();
+    // Show/hide extra input
+    function handleUrlChange() {
+      const url = urlInput.value.trim();
+      const requiresExtra = spreadsheetWithNoGidRegex.test(url);
 
-        // Reset error states
-        [urlInput, fromRowInput, toRowInput].forEach(el => el.classList.remove("input-error"));
-        [urlMsg, fromMsg, toMsg].forEach(msg => msg.textContent = "");
+      if (requiresExtra) {
+        extraContainer.classList.add("show");
+        extraInput.setAttribute("required", "required");
+      } else {
+        extraContainer.classList.remove("show");
+        extraInput.removeAttribute("required");
+        extraInput.classList.remove("input-error");
+        extraMsg.textContent = "";
+      }
+    }
 
-        // Validate URL
-        if (!url) {
-          urlMsg.textContent = "URL is required.";
+    urlInput.addEventListener("input", handleUrlChange);
+    handleUrlChange(); // Initial run
+
+    form.addEventListener("submit", (e) => {
+      let isValid = true;
+
+      const url = urlInput.value.trim();
+      const fromRow = fromRowInput.value.trim();
+      const toRow = toRowInput.value.trim();
+
+      [urlInput, fromRowInput, toRowInput, extraInput].forEach(el =>
+        el.classList.remove("input-error")
+      );
+      [urlMsg, fromMsg, toMsg, extraMsg].forEach(msg => (msg.textContent = ""));
+
+      if (!url) {
+        urlMsg.textContent = "URL is required.";
+        urlInput.classList.add("input-error");
+        isValid = false;
+      } else {
+        // Check if URL matches either pattern
+        const hasGid = spreadsheetRegex.test(url);
+        const isValidWithoutGid = spreadsheetWithNoGidRegex.test(url);
+
+        if (!hasGid && !isValidWithoutGid) {
+          urlMsg.textContent = "Must be a valid Google Spreadsheet URL.";
           urlInput.classList.add("input-error");
           isValid = false;
-        } else if (!spreadsheetRegex.test(url)) {
-          urlMsg.textContent = "Must be a valid Google Spreadsheet URL with gid.";
-          urlInput.classList.add("input-error");
-          isValid = false;
-        }
-
-        // Validate From Row
-        const fromRowVal = parseInt(fromRow, 10);
-        if (!fromRow) {
-          fromMsg.textContent = "Start row is required.";
-          fromRowInput.classList.add("input-error");
-          isValid = false;
-        } else if (isNaN(fromRowVal) || fromRowVal < 1) {
-          fromMsg.textContent = "Must be a positive integer.";
-          fromRowInput.classList.add("input-error");
-          isValid = false;
-        }
-
-        // Validate To Row
-        const toRowVal = parseInt(toRow, 10);
-        if (!toRow) {
-          toMsg.textContent = "End row is required.";
-          toRowInput.classList.add("input-error");
-          isValid = false;
-        } else if (isNaN(toRowVal) || toRowVal < 2) {
-          toMsg.textContent = "Must be a positive integer (at least 2).";
-          toRowInput.classList.add("input-error");
-          isValid = false;
-        } else if (!isNaN(fromRowVal) && toRowVal < fromRowVal) {
-          toMsg.textContent = "End row must be ≥ start row.";
-          toRowInput.classList.add("input-error");
-          isValid = false;
-        }
-
-        if (!isValid) {
-          e.preventDefault(); // Block form submission
-        }
-      });
-
-      // Sync language selects
-      const fromSel = document.getElementById("from");
-      const toSel = document.getElementById("to");
-
-      function syncLang(from, to) {
-        if (from.value === to.value) {
-          to.value = from.value === "en" ? "uk" : "en";
         }
       }
 
-      fromSel.addEventListener("change", () => syncLang(fromSel, toSel));
-      toSel.addEventListener("change", () => syncLang(toSel, fromSel));
+      const fromRowVal = parseInt(fromRow, 10);
+      if (!fromRow) {
+        fromMsg.textContent = "Start row is required.";
+        fromRowInput.classList.add("input-error");
+        isValid = false;
+      } else if (isNaN(fromRowVal) || fromRowVal < 1) {
+        fromMsg.textContent = "Must be a positive integer.";
+        fromRowInput.classList.add("input-error");
+        isValid = false;
+      }
 
-      syncLang(fromSel, toSel); // Initial sync
+      const toRowVal = parseInt(toRow, 10);
+      if (!toRow) {
+        toMsg.textContent = "End row is required.";
+        toRowInput.classList.add("input-error");
+        isValid = false;
+      } else if (isNaN(toRowVal) || toRowVal < 2) {
+        toMsg.textContent = "Must be a positive integer (at least 2).";
+        toRowInput.classList.add("input-error");
+        isValid = false;
+      } else if (!isNaN(fromRowVal) && toRowVal < fromRowVal) {
+        toMsg.textContent = "End row must be ≥ start row.";
+        toRowInput.classList.add("input-error");
+        isValid = false;
+      }
+
+      const extraVisible = extraContainer.classList.contains("show");
+      if (extraVisible && !extraInput.value.trim()) {
+        extraMsg.textContent = "Sheet name is required.";
+        extraInput.classList.add("input-error");
+        isValid = false;
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
     });
+
+    // Language sync logic
+    const fromSel = document.getElementById("from");
+    const toSel = document.getElementById("to");
+
+    function syncLang(from, to) {
+      if (from.value === to.value) {
+        to.value = from.value === "en" ? "uk" : "en";
+      }
+    }
+
+    fromSel.addEventListener("change", () => syncLang(fromSel, toSel));
+    toSel.addEventListener("change", () => syncLang(toSel, fromSel));
+    syncLang(fromSel, toSel); // Initial sync
+  });
   </script>
 </body>
 </html>

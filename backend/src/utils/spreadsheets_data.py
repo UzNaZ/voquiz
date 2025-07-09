@@ -90,7 +90,7 @@ async def get_sheet_data(
 
 
 async def get_sheet_data_by_name(
-    link: str, sheet_name: str, from_lang: Literal["en", "uk"]
+    link: str, from_lang: Literal["en", "uk"], sheet_name: str
 ) -> Optional[dict[str, str]]:
     """
     Fetches CSV data from a Google Sheet using the spreadsheet ID and the sheet's name.
