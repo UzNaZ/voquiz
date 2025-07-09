@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="{{ url_for('static', path='error.css') }}" />
+<div class="app">
+    <div class="error">
+        {{ status_code }}
+    </div>
+    <div class="img">
+        <img src="{{ url_for('images', path='cat.png') }}" alt="cat">
+        <h1 class="okak">THAT SO</h1>
+    </div>
+</div>

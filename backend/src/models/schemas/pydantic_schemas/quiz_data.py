@@ -7,7 +7,7 @@ from backend.values import AllRegexes
 
 
 class QuizData(BaseModel):
-    url: str = Field(..., pattern=AllRegexes.SPREADSHEET_LINK)
+    url: str
     sheet_name: str = Field(default="")
     from_row_to_row: tuple[int, int]
     from_lang: Literal["uk", "en"]
@@ -20,7 +20,6 @@ class QuizData(BaseModel):
         """
         url_has_gid = re.search(AllRegexes.URL_HAS_SHEET_ID, self.url)
         url_is_valid_spreadsheet = re.match(AllRegexes.SPREADSHEET_LINK, self.url)
-        print(self.sheet_name.strip())
         if not url_has_gid and not url_is_valid_spreadsheet:
             raise ValueError("Invalid Google Sheets URL format")
 

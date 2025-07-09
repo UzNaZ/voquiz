@@ -37,7 +37,7 @@ def get_spreadsheet_id(link: str):
     return spreadsheet_id
 
 
-async def get_sheet_id(link: str):
+def get_sheet_id(link: str):
     """
     Extracts the sheet (gid) ID from a Google Sheets URL.
 
@@ -62,7 +62,7 @@ async def get_sheet_data(
     :return: A dictionary where keys are words in the source language and values are their translations.
     """
     spreadsheet_id = get_spreadsheet_id(link)
-    sheet_id = await get_sheet_id(link)
+    sheet_id = get_sheet_id(link)
 
     url = Spreadsheets.GET_BY_GID_URL.format(
         spreadsheet_id=spreadsheet_id, gid=sheet_id

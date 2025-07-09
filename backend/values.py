@@ -16,7 +16,7 @@ class AllRegexes:
     SPREADSHEET_LINK = (
         r"^https://docs\.google\.com/spreadsheets/d/[\w-]+(?:/[^\s?#]*)?(?:\?[^#]*)?$"
     )
-    URL_HAS_SHEET_ID = r"/spreadsheets/d/[\w-]+(?:/[^\s?#]*)?(?:\?[^#]*)?.*gid=\d+"
+    URL_HAS_SHEET_ID = r"/spreadsheets/d/[\w-]+(?:/[^\s?#]*)?(?:\?[^#]*)?.*gid=(\d+)"
     URL_HAS_SPREADSHEET_ID = r"/spreadsheets/d/([A-Za-z0-9-_]+)"
     WORD_IN_PARENTHESES = r"\(.*?\)"
 
