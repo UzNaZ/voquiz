@@ -93,4 +93,4 @@ def slice_dict(dict_obj: dict, start: int, stop: int) -> dict:
     if stop - start > Spreadsheets.MAX_QUESTIONS:
         stop = start + Spreadsheets.MAX_QUESTIONS
 
-    return dict(list(dict_obj.items())[start - 1 : stop + 1])
+    return dict(list(dict_obj.items())[start - 1:stop])

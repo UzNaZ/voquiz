@@ -1,24 +1,45 @@
-<!-- finish.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoQuiz</title>
     <link rel="icon" href="{{ url_for('images', path='logo.png') }}" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', path='end.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='end.css') }}" />
 </head>
 <body>
-    <div class="parent">
-        <div class="container d-flex flex-column align-items-center">
-            <h1 class="mb-5 logo-text">VoQuiz</h1>
-            <p class="text-muted mb-4">Congratulations! You've completed the quiz.</p>
-            <p class="text-muted mb-4">Number of correct answers: {{ correct_answers }}</p>
-            <div class="mt-5">
-                <a href="/api" class="btn-start">Back to homepage</a>
+    <div class="container">
+        <div class="close-icon">
+            {% if correct_answers >= amount_of_questions / 2 %}
+            <div class="cat-rate-pic">
+                <img src="{{ url_for('images', path='happy_cat.png') }}" alt="Success">
             </div>
+            {% else %}
+            <div class="cat-rate-pic">
+                <img src="{{ url_for('images', path='larry.png') }}" alt="Failure">
+            </div>
+            {% endif %}
+        </div>
+
+        <h1 class="logo-text">VoQuiz</h1>
+
+        <div class="stats-container">
+            <div class="stat-bar">
+                <div class="stat-icon thumbs-up"></div>
+                <div class="stat-line correct-line">
+                    <span class="stat-text">{{ correct_answers }}</span>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-icon thumbs-down"></div>
+                <div class="stat-line wrong-line">
+                    <span class="stat-text">{{ amount_of_questions - correct_answers }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <a href="/api" class="btn-start">Back to homepage</a>
         </div>
     </div>
 </body>

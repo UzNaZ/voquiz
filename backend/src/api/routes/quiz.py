@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -38,13 +38,12 @@ async def start_quiz(
         spreadsheet_data, *quiz_data["from_row_to_row"]
     )
     shown_data = sliced_spreadsheet_data
-    clean_data = delete_explanations(sliced_spreadsheet_data)
+    clean_data = delete_explanations(shown_data)
     functions = (
+        delete_words_without_translation,
         check_for_multiple_translations,
         lambda x: check_for_multiple_translations(x, "/"),
-        delete_words_without_translation,
     )
-
     for func in functions:
         shown_data = func(shown_data)
         clean_data = func(clean_data)
@@ -63,7 +62,7 @@ async def start_quiz(
     session_data["correct_answers"] = 0
     await session_data.save()
     url = request.url_for("get_question", index=0)
-    return RedirectResponse(url, status_code=302)
+    return RedirectResponse(url, status_code=status.HTTP_302_FOUND)
 
 
 @quiz_router.get("/quiz/question/{index}")
@@ -74,16 +73,11 @@ async def get_question(
     shown_data = session_data.get("shown_data")
     if not shown_data:
         url = request.url_for("start")
-        return RedirectResponse(url, status_code=302)
+        return RedirectResponse(url, status_code=status.HTTP_302_FOUND)
     quiz_keys = session_data.get("quiz_keys")
     if index + 1 > len(quiz_keys):
-        correct_answers = session_data.get("correct_answers", 0)
-        await session_data.clear()
-        return templates.TemplateResponse(
-            name="end.html",
-            request=request,
-            context={"correct_answers": correct_answers},
-        )
+        url = request.url_for("get_quiz_results")
+        return RedirectResponse(url, status_code=status.HTTP_302_FOUND)
 
     current_key = quiz_keys[index]
     current_value = shown_data[current_key]
@@ -109,12 +103,13 @@ async def submit_answer(
     session_data: SessionData = Depends(get_session_data),
     answer: QuizAnswer = Depends(validate_quiz_answer),
 ):
+    clean_answer = answer.answer.lower().strip()
     current_index = session_data.get("current_index")
     shown_data = session_data.get("shown_data")
     clean_data = session_data.get("clean_data")
     if not clean_data:
         url = request.url_for("start")
-        return RedirectResponse(url, status_code=302)
+        return RedirectResponse(url, status_code=status.HTTP_302_FOUND)
 
     quiz_keys = session_data.get("quiz_keys")
     clean_data_keys = session_data.get("clean_data_keys")
@@ -123,7 +118,13 @@ async def submit_answer(
     current_shown_source_word = check_for_multiple_source_words(current_shown_data_key)
     current_value = shown_data[current_shown_data_key]
     clean_translations = clean_data[current_clean_data_key]
-    if is_correct := answer.answer.lower().strip() in clean_translations:
+    is_correct_option = clean_answer in clean_translations
+    if "," in clean_answer:
+        answers = list(map(str.strip, clean_answer.split(",")))
+        multiple_answers_passed = any(ans in clean_translations for ans in answers)
+        is_correct_option = multiple_answers_passed
+
+    if is_correct_option:
         session_data["correct_answers"] = session_data.get("correct_answers") + 1
 
     await session_data.save()
@@ -135,6 +136,19 @@ async def submit_answer(
             "translations": current_value,
             "question_number": current_index + 1,
             "amount_of_questions": session_data.get("amount_of_questions"),
-            "is_correct": is_correct,
+            "is_correct": is_correct_option,
         },
+    )
+
+
+@quiz_router.get("/quiz/end")
+async def get_quiz_results(
+        request: Request,
+        session_data: SessionData = Depends(get_session_data)):
+    amount_of_questions = session_data.get("amount_of_questions")
+    correct_answers = session_data.get("correct_answers", 0)
+    return templates.TemplateResponse(
+        name="end.html",
+        request=request,
+        context={"amount_of_questions": amount_of_questions, "correct_answers": correct_answers},
     )
