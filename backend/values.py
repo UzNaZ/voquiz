@@ -5,8 +5,8 @@ from dataclasses import dataclass
 class Spreadsheets:
     GET_BY_GID_URL = "https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=csv&gid={gid}"
     GET_BY_NAME_URL = "https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-    EN_COLUMN_NUMBER = 1
-    UK_COLUMN_NUMBER = 3
+    EN_COLUMN_INDEX = 1
+    UK_COLUMN_INDEX = 3
     ID_FROM_URL_GROUP = 1
     MAX_QUESTIONS = 100
 

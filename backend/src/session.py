@@ -3,8 +3,7 @@ This module contains the database session configuration for FastAPI routes.
 """
 
 from config import settings
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 # Ensure the DATABASE_URL uses asyncpg
 engine = create_async_engine(settings.db_url)

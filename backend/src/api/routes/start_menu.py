@@ -12,8 +12,8 @@ templates = Jinja2Templates(directory="frontend/templates")
 
 @menu_router.get("/")
 async def start(
-        request: Request,
-        session_data: SessionData = Depends(get_session_data),
+    request: Request,
+    session_data: SessionData = Depends(get_session_data),
 ):
     await session_data.clear()
     return templates.TemplateResponse(name="home.html", request=request)

@@ -1,4 +1,5 @@
 import re
+from typing import Literal
 
 from backend.values import AllRegexes, Spreadsheets
 
@@ -77,20 +78,27 @@ def delete_words_without_translation(spreadsheet_data: UkAndEnWords):
     }
 
 
-def slice_dict(dict_obj: dict, start: int, stop: int) -> dict:
+def slice_dict(dict_items_list: list[tuple[str, str]], start: int, end: int) -> dict:
     """
-    Removes entries from the dictionary where the source word or translation value is empty.
+    Slices a dictionary according to start and end values.
 
-    :param dict_obj: a dict instance you want to slice
+    :param dict_items_list: representation of the dict you want to slice
     :param start: starting point
-    :param stop: finishing point
-    :return: A filtered dictionary excluding entries without the source word or translations.
+    :param end: finishing point
+    :return: A sliced dictionary
     """
-    dict_len = len(dict_obj.items())
-    if stop > dict_len:
-        stop = dict_len
+    dict_len = len(dict_items_list)
+    if end > dict_len:
+        end = dict_len
 
-    if stop - start > Spreadsheets.MAX_QUESTIONS:
-        stop = start + Spreadsheets.MAX_QUESTIONS
+    if end - start > Spreadsheets.MAX_QUESTIONS:
+        end = start + Spreadsheets.MAX_QUESTIONS
 
-    return dict(list(dict_obj.items())[start - 1:stop])
+    return dict(dict_items_list[start - 1 : end])
+
+
+def remove_gender_ending(word: str, lang: Literal["uk", "en"]) -> str:
+    for ending in ["ий", "а", "о"]:
+        if word.endswith(ending):
+            word = word.replace(ending, "")
+    return word

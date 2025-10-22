@@ -6,13 +6,14 @@ from fastapi.templating import Jinja2Templates
 
 from backend.src.models.schemas.pydantic_schemas.quiz_data import QuizAnswer
 from backend.src.services.redis import SessionData, get_session_data
-from backend.src.utils.serializers import (check_for_multiple_source_words,
-                                           check_for_multiple_translations,
-                                           delete_explanations,
-                                           delete_words_without_translation,
-                                           slice_dict)
-from backend.src.utils.spreadsheets_data import (get_sheet_data,
-                                                 get_sheet_data_by_name)
+from backend.src.utils.serializers import (
+    check_for_multiple_source_words,
+    check_for_multiple_translations,
+    delete_explanations,
+    delete_words_without_translation,
+    slice_dict,
+)
+from backend.src.utils.spreadsheets_data import get_sheet_data, get_sheet_data_by_name
 from backend.src.utils.validators import validate_quiz_answer
 
 quiz_router = APIRouter()
@@ -37,6 +38,7 @@ async def start_quiz(
     sliced_spreadsheet_data = slice_dict(
         spreadsheet_data, *quiz_data["from_row_to_row"]
     )
+
     shown_data = sliced_spreadsheet_data
     clean_data = delete_explanations(shown_data)
     functions = (
@@ -103,7 +105,7 @@ async def submit_answer(
     session_data: SessionData = Depends(get_session_data),
     answer: QuizAnswer = Depends(validate_quiz_answer),
 ):
-    clean_answer = answer.answer.lower().strip()
+    clean_answer = delete_explanations(answer.answer.lower().strip())
     current_index = session_data.get("current_index")
     shown_data = session_data.get("shown_data")
     clean_data = session_data.get("clean_data")
@@ -143,12 +145,15 @@ async def submit_answer(
 
 @quiz_router.get("/quiz/end")
 async def get_quiz_results(
-        request: Request,
-        session_data: SessionData = Depends(get_session_data)):
+    request: Request, session_data: SessionData = Depends(get_session_data)
+):
     amount_of_questions = session_data.get("amount_of_questions")
     correct_answers = session_data.get("correct_answers", 0)
     return templates.TemplateResponse(
         name="end.html",
         request=request,
-        context={"amount_of_questions": amount_of_questions, "correct_answers": correct_answers},
+        context={
+            "amount_of_questions": amount_of_questions,
+            "correct_answers": correct_answers,
+        },
     )

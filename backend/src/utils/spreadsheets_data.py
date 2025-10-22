@@ -51,7 +51,7 @@ def get_sheet_id(link: str):
 
 async def get_sheet_data(
     link: str, from_lang: Literal["en", "uk"]
-) -> Optional[dict[str, str]]:
+) -> Optional[list[tuple[str, str]]]:
     """
     Retrieves translation word pairs from a Google Sheets CSV and returns them in serialization-ready format.
 
@@ -74,24 +74,30 @@ async def get_sheet_data(
     data = StringIO(response.text)
     reader = csv.reader(data)
 
-    result = {}
+    result = []
     if from_lang == "uk":
         for row in reader:
-            result[row[Spreadsheets.UK_COLUMN_NUMBER].lower()] = row[
-                Spreadsheets.EN_COLUMN_NUMBER
-            ].lower()
+            result.append(
+                (
+                    row[Spreadsheets.UK_COLUMN_INDEX].lower(),
+                    row[Spreadsheets.EN_COLUMN_INDEX].lower(),
+                )
+            )
     elif from_lang == "en":
         for row in reader:
-            result[row[Spreadsheets.EN_COLUMN_NUMBER].lower()] = row[
-                Spreadsheets.UK_COLUMN_NUMBER
-            ].lower()
+            result.append(
+                (
+                    row[Spreadsheets.EN_COLUMN_INDEX].lower(),
+                    row[Spreadsheets.UK_COLUMN_INDEX].lower(),
+                )
+            )
 
     return result
 
 
 async def get_sheet_data_by_name(
     link: str, from_lang: Literal["en", "uk"], sheet_name: str
-) -> Optional[dict[str, str]]:
+) -> Optional[list[tuple[str, str]]]:
     """
     Fetches CSV data from a Google Sheet using the spreadsheet ID and the sheet's name.
 
@@ -113,16 +119,22 @@ async def get_sheet_data_by_name(
     data = StringIO(response.text)
     reader = csv.reader(data)
 
-    result = {}
+    result = []
     if from_lang == "uk":
         for row in reader:
-            result[row[Spreadsheets.UK_COLUMN_NUMBER].lower()] = row[
-                Spreadsheets.EN_COLUMN_NUMBER
-            ].lower()
+            result.append(
+                (
+                    row[Spreadsheets.UK_COLUMN_INDEX].lower(),
+                    row[Spreadsheets.EN_COLUMN_INDEX].lower(),
+                )
+            )
     elif from_lang == "en":
         for row in reader:
-            result[row[Spreadsheets.EN_COLUMN_NUMBER].lower()] = row[
-                Spreadsheets.UK_COLUMN_NUMBER
-            ].lower()
+            result.append(
+                (
+                    row[Spreadsheets.EN_COLUMN_INDEX].lower(),
+                    row[Spreadsheets.UK_COLUMN_INDEX].lower(),
+                )
+            )
 
     return result
