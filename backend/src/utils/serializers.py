@@ -8,20 +8,24 @@ UkAndEnWords = dict[AnswerOrAnswers, AnswerOrAnswers]
 
 
 def check_for_multiple_translations(
-    spreadsheet_data: dict[str, str], separator: str = ","
+    spreadsheet_data: dict[str, str]
 ) -> UkAndEnWords:
     """
     Converts comma-separated values in the dictionary into tuples to support multiple translations.
 
     :param spreadsheet_data: A dictionary where both keys and values are strings representing single words or phrases.
-    :param separator: The delimiter used to separate multiple translations in a single string.
     :return: A dictionary where keys and/or values may be tuples if multiple entries were present.
     """
     result = {}
     for source_word, translated_word in spreadsheet_data.items():
-        if separator in translated_word:
+        if "," in translated_word:
             translated_words = tuple(
-                word.strip() for word in translated_word.split(separator)
+                word.strip() for word in translated_word.split(",")
+            )
+            print(translated_words)
+        elif "/" in translated_word:
+            translated_words = tuple(
+                word.strip() for word in translated_word.split("/")
             )
         else:
             translated_words = (
@@ -35,10 +39,12 @@ def check_for_multiple_translations(
 
 
 def check_for_multiple_source_words(
-    source_word: str, separator: str = ","
+    source_word: str
 ) -> tuple[str, ...]:
-    if separator in source_word:
-        source_words = tuple(word.strip() for word in source_word.split(separator))
+    if "," in source_word:
+        source_words = tuple(word.strip() for word in source_word.split(","))
+    elif "/" in source_word:
+        source_words = tuple(word.strip() for word in source_word.split("/"))
     else:
         source_words = (source_word,)
     return source_words
@@ -94,11 +100,43 @@ def slice_dict(dict_items_list: list[tuple[str, str]], start: int, end: int) -> 
     if end - start > Spreadsheets.MAX_QUESTIONS:
         end = start + Spreadsheets.MAX_QUESTIONS
 
-    return dict(dict_items_list[start - 1 : end])
+    return dict(dict_items_list[start - 1: end])
 
 
-def remove_gender_ending(word: str, lang: Literal["uk", "en"]) -> str:
-    for ending in ["ий", "а", "о"]:
-        if word.endswith(ending):
-            word = word.replace(ending, "")
-    return word
+def remove_gender_endings(words: tuple[str, ...]) -> tuple[str, ...]:
+    """
+    Removes gender endings from each word in a given array.
+
+    This function iterates through each word in the input array and removes ukrainian gender
+    endings ("ий", "а", "о").
+
+    :param words: The input tuple, which may contain one or more words.
+    :return: A new tuple containing words with gender endings removed.
+    """
+    processed_words = []
+    for word in words:
+        for ending in ["ий", "а", "о"]:
+            if word.endswith(ending):
+                processed_words.append(word[: -len(ending)])
+    if not processed_words:
+        processed_words = words
+    return tuple(processed_words)
+
+
+def remove_function_words(words: tuple[str, ...]) -> tuple[str, ...]:
+    processed_words = []
+    for word in words:
+        for func_word in ["to ", "а ", "the "]:
+            if word.startswith(func_word):
+                processed_words.append(word.replace(func_word, ""))
+            else:
+                processed_words.append(word)
+    return tuple(processed_words)
+
+
+def serialize_according_to_the_lang(from_lang: Literal["en", "uk"], words: tuple[str, ...]) -> tuple[str, ...]:
+    if from_lang == "en":
+        words = remove_gender_endings(words)
+    else:
+        words = remove_function_words(words)
+    return words
