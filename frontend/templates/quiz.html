@@ -32,7 +32,7 @@
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Translate the word:</div>
                 <div class="question-text-wrapper">
-                  <p class="card-text question-text mb-4">{{ ", ".join(source_words) }}</p>
+                  <p class="card-text question-text mb-4">{{ "/".join(source_words) }}</p>
                 </div>
 
                 <form id="answer-form" method="POST" action="/api/quiz/answer">
@@ -96,7 +96,7 @@
                 <h1 class="logo-text mb-4">VoQuiz</h1>
                 <div class="question-label text-muted">Correct answer:</div>
                 <div class="question-text-wrapper">
-                  <p class="card-text question-text mb-4">{{ ", ".join(translations) }}</p>
+                  <p class="card-text question-text mb-4">{{ "/".join(translations) }}</p>
                 </div>
                 <p id="filler"></p>
 
