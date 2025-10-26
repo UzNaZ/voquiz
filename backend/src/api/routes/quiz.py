@@ -27,7 +27,6 @@ async def start_quiz(
     quiz_data = session_data.get("quiz_data")
     url = quiz_data["url"]
     from_lang = quiz_data["from_lang"]
-    print(from_lang)
     sheet_name = quiz_data["sheet_name"].strip()
     if sheet_name:
         spreadsheet_data = await get_sheet_data_by_name(url, from_lang, sheet_name)
@@ -107,7 +106,6 @@ async def submit_answer(
     answer: QuizAnswer = Depends(validate_quiz_answer),
 ):
     from_lang = session_data.get("from_lang")
-    print(from_lang)
     clean_answer = delete_explanations(answer.answer.lower().strip())
     clean_answer = serialize_according_to_the_lang(from_lang, (clean_answer,))[0]
     current_index = session_data.get("current_index")

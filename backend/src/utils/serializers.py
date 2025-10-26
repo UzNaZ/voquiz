@@ -22,7 +22,6 @@ def check_for_multiple_translations(
             translated_words = tuple(
                 word.strip() for word in translated_word.split(",")
             )
-            print(translated_words)
         elif "/" in translated_word:
             translated_words = tuple(
                 word.strip() for word in translated_word.split("/")
