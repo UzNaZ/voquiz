@@ -114,7 +114,7 @@ def remove_gender_endings(words: tuple[str, ...]) -> tuple[str, ...]:
     """
     processed_words = []
     for word in words:
-        for ending in ["ий", "а", "о"]:
+        for ending in ["ий", "а", "е", "о"]:
             if word.endswith(ending):
                 processed_words.append(word[: -len(ending)])
     if not processed_words:
@@ -125,7 +125,7 @@ def remove_gender_endings(words: tuple[str, ...]) -> tuple[str, ...]:
 def remove_function_words(words: tuple[str, ...]) -> tuple[str, ...]:
     processed_words = []
     for word in words:
-        for func_word in ["to ", "а ", "the "]:
+        for func_word in ["to ", "а ", "an ", "the "]:
             if word.startswith(func_word):
                 processed_words.append(word.replace(func_word, ""))
             else:
