@@ -124,10 +124,12 @@ async def submit_answer(
 
     current_shown_source_word = check_for_multiple_source_words(current_shown_data_key)
     current_value = shown_data[current_shown_data_key]
+    shown_translations = [string.replace("(", "").replace(")", "") for string in current_value]
     clean_translations = clean_data[current_clean_data_key]
     clean_translations = serialize_according_to_the_lang(from_lang, clean_translations)
-
-    is_correct_option = clean_answer in clean_translations
+    print(clean_translations)
+    print(clean_answer)
+    is_correct_option = clean_answer in clean_translations or clean_answer in shown_translations
     answers = ()
     if "," in clean_answer:
         answers = tuple(map(str.strip, clean_answer.split(",")))
@@ -136,7 +138,8 @@ async def submit_answer(
 
     if answers:
         answers = serialize_according_to_the_lang(from_lang, answers)
-        is_correct_option = any(ans in clean_translations for ans in answers)
+        is_correct_option = (any(ans in clean_translations for ans in answers) or
+                             any(ans in shown_translations for ans in answers))
 
     if is_correct_option:
         session_data["correct_answers"] = session_data.get("correct_answers") + 1

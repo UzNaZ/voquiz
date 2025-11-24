@@ -128,8 +128,8 @@ def remove_function_words(words: tuple[str, ...]) -> tuple[str, ...]:
         for func_word in ["to ", "а ", "an ", "the "]:
             if word.startswith(func_word):
                 processed_words.append(word.replace(func_word, ""))
-            else:
-                processed_words.append(word)
+        if not processed_words:
+            processed_words.append(word)
     return tuple(processed_words)
 
 
