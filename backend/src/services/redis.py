@@ -10,7 +10,8 @@ from backend.values import RedisData
 _redis_client = redis.from_url(
     os.getenv("REDIS_URL"),
     decode_responses=True,
-    ssl_cert_reqs=None,
+    ssl=True,
+    ssl_cert_reqs="required",
 )
 
 
